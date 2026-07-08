@@ -1,0 +1,42 @@
+{
+  "name": "flowpay",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "dotenv": "^17.2.2",
+      "zod": "^4.1.13",
+      "typescript": "^5",
+      "@types/bun": "^1.3.4",
+      "better-auth": "1.5.2",
+      "@better-auth/expo": "1.5.2"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @flowpay/db db:push",
+    "db:studio": "turbo -F @flowpay/db db:studio",
+    "db:generate": "turbo -F @flowpay/db db:generate",
+    "db:migrate": "turbo -F @flowpay/db db:migrate"
+  },
+  "dependencies": {
+    "@flowpay/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@flowpay/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "turbo": "^2.8.12",
+    "typescript": "catalog:"
+  },
+  "packageManager": "bun@1.2.19"
+}
