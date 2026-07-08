@@ -1,0 +1,325 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@import 'heroui-native/styles';
+
+/* Path to the heroui-native lib inside node_modules relative to global.css */
+/* Examples:
+ *   - If global.css is at project root: ./node_modules/heroui-native/lib
+ *   - If global.css is in app/: ../node_modules/heroui-native/lib
+ *   - If global.css is in src/styles/: ../../node_modules/heroui-native/lib
+ */
+@source '../../node_modules/heroui-native/lib';
+
+/* =============================================================================
+   FLOWPAY DESIGN SYSTEM — HeroUI Native Theme
+   Colors derived from official Flowpay design guidelines.
+   Reference: https://v3.heroui.com/docs/native/getting-started/theming
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Primitive / Base Colors (do not change between light and dark)
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Primitive Colors */
+  --white: oklch(100% 0 0);
+  --black: oklch(0% 0 0);
+  --snow: oklch(0.9911 0 0);
+  --eclipse: oklch(0.2103 0.0059 285.89);
+
+  /* ── Flowpay Brand Primitives ────────────────────────────────────────────── */
+
+  /* Primary Green Palette — #1E4C76 base (Radiant/Moderate Green) */
+  /* Note: the design uses teal-greens mapped to #1E4C76 key; actual swatches
+     listed below are teal/green-hued so we convert from those hex values.    */
+  --brand-green-900: oklch(0.168 0.046 174.8); /* #0C1A18 */
+  --brand-green-800: oklch(0.2 0.054 173.9);   /* #0F221F */
+  --brand-green-700: oklch(0.238 0.063 172.5); /* #142C28 */
+  --brand-green-600: oklch(0.286 0.072 171.2); /* #193833 */
+  --brand-green-500: oklch(0.309 0.077 170.8); /* #1C3E38 */
+  --brand-green-400: oklch(0.468 0.065 175.4); /* #496560 */
+  --brand-green-300: oklch(0.565 0.052 177.3); /* #677E7A */
+  --brand-green-200: oklch(0.68 0.037 176.5);  /* #97A6A3 */
+  --brand-green-100: oklch(0.778 0.027 177.2); /* #B9C3C1 */
+  --brand-green-50:  oklch(0.934 0.009 175.9); /* #E8ECEB */
+
+  --dark-green: oklch(0.252 0.031 181.5);           /* #0F2723 */
+  --dark-charcoal-green: oklch(0.336 0.041 180.8);  /* #1C3E38 */
+
+  /* Danger Red Palette — Bright Red #E9383E */
+  --brand-red-900: oklch(0.28 0.165 26.6);   /* #610306 */
+  --brand-red-800: oklch(0.336 0.194 26.9);  /* #830B0F */
+  --brand-red-700: oklch(0.398 0.212 27.2);  /* #A5161B */
+  --brand-red-600: oklch(0.484 0.211 27.6);  /* #C7252B */
+  --brand-red-500: oklch(0.566 0.223 27.5);  /* #E9383E */
+  --brand-red-400: oklch(0.601 0.236 27.4);  /* #FF4B51 */
+  --brand-red-300: oklch(0.672 0.21 26.8);   /* #FF7378 */
+  --brand-red-200: oklch(0.746 0.156 22.9);  /* #FF9C9F */
+  --brand-red-100: oklch(0.836 0.098 19.2);  /* #FFC4C6 */
+  --brand-red-50:  oklch(0.967 0.027 10.4);  /* #FFF2F7 */
+
+  /* Warning Orange Palette — #F07400 */
+  --brand-orange-900: oklch(0.332 0.13 50.2);  /* #653100 */
+  --brand-orange-800: oklch(0.38 0.148 50.8);  /* #844000 */
+  --brand-orange-700: oklch(0.432 0.162 52.3); /* #AA5200 */
+  --brand-orange-600: oklch(0.522 0.179 53.2); /* #DA6A00 */
+  --brand-orange-500: oklch(0.588 0.193 53.7); /* #F07400 */
+  --brand-orange-400: oklch(0.662 0.175 55.5); /* #F39033 */
+  --brand-orange-300: oklch(0.718 0.154 57.3); /* #F5A254 */
+  --brand-orange-200: oklch(0.788 0.122 59.1); /* #F8BF8A */
+  --brand-orange-100: oklch(0.854 0.087 63.2); /* #FAD4B0 */
+  --brand-orange-50:  oklch(0.954 0.035 71.8); /* #FEF1E6 */
+
+  /* Neutral Palette */
+  --brand-black:       oklch(0% 0 0);       /* #000000 */
+  --brand-grey:        oklch(0.325 0 0);    /* #333333 */
+  --brand-silver:      oklch(0.862 0 0);    /* #D9D9D9 */
+  --brand-flashwhite:  oklch(0.944 0 0);    /* #F0F0F0 */
+  --brand-white:       oklch(100% 0 0);     /* #FFFFFF */
+
+  /* Border */
+  --border-width: 1px;
+  --field-border-width: 0px;
+
+  /* Base radius */
+  --radius: 0.5rem;
+  --field-radius: calc(var(--radius) * 1.5);
+
+  /* Opacity */
+  --opacity-disabled: 0.5;
+
+  /* ── Font Family — Plus Jakarta Sans ────────────────────────────────────── */
+  /* PostScript names must match the keys used in useFonts() in _layout.tsx   */
+  --font-normal:   'PlusJakartaSans_400Regular';
+  --font-medium:   'PlusJakartaSans_500Medium';
+  --font-semibold: 'PlusJakartaSans_600SemiBold';
+  --font-bold:     'PlusJakartaSans_700Bold';
+
+  /* ── Typography Scale — Flowpay Design Guidelines ────────────────────────
+     Naming: --text-{token}           → font size (rem)
+             --text-{token}--leading  → line-height (Tailwind v4 convention)
+     All sizes are Bold weight per design spec.
+     Base: 1rem = 16px                                                        */
+
+  /* Headline */
+  --text-h1: 3.25rem;        /* 52px — Bold */
+  --text-h1--leading: 1.15;
+  --text-h2: 1.75rem;        /* 28px — Bold */
+  --text-h2--leading: 1.2;
+  --text-h3: 1.5rem;         /* 24px — Bold */
+  --text-h3--leading: 1.25;
+  --text-h4: 1.25rem;        /* 20px — Bold */
+  --text-h4--leading: 1.3;
+  --text-h5: 1rem;           /* 16px — Bold */
+  --text-h5--leading: 1.35;
+  --text-h6: 0.875rem;       /* 14px — Bold */
+  --text-h6--leading: 1.4;
+
+  /* Body */
+  --text-body-xl: 1.125rem;  /* 18px — Bold */
+  --text-body-xl--leading: 1.5;
+  --text-body-lg: 1rem;      /* 16px — Bold */
+  --text-body-lg--leading: 1.5;
+  --text-body-md: 0.875rem;  /* 14px — Bold */
+  --text-body-md--leading: 1.5;
+  --text-body-sm: 0.75rem;   /* 12px — Bold */
+  --text-body-sm--leading: 1.5;
+  --text-body-xs: 0.625rem;  /* 10px — Bold */
+  --text-body-xs--leading: 1.5;
+  --text-body-tiny: 0.5rem;  /* 8px  — Bold */
+  --text-body-tiny--leading: 1.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme Variables — Light & Dark modes
+   Uses Uniwind @variant system for automatic switching
+   --------------------------------------------------------------------------- */
+@layer theme {
+  @variant light {
+      /* ── Background & Foreground ─────────────────────────────────────────── */
+      --background: oklch(0.944 0 0);           /* Flash White #F0F0F0 */
+      --foreground: oklch(0% 0 0);              /* Black #000000 */
+
+      /* ── Surface (cards, accordions, disclosure groups) ──────────────────── */
+      --surface: oklch(100% 0 0);               /* White #FFFFFF */
+      --surface-foreground: oklch(0.325 0 0);   /* Grey #333333 */
+
+      --surface-secondary: oklch(0.934 0.009 175.9);   /* Green 50 #E8ECEB */
+      --surface-secondary-foreground: oklch(0.325 0 0);
+
+      --surface-tertiary: oklch(0.778 0.027 177.2);    /* Green 100 #B9C3C1 */
+      --surface-tertiary-foreground: oklch(0.325 0 0);
+
+      /* ── Overlay (dialogs, modals, popovers) ─────────────────────────────── */
+      --overlay: oklch(100% 0 0);               /* White */
+      --overlay-foreground: oklch(0.325 0 0);   /* Grey */
+
+      /* ── Muted ───────────────────────────────────────────────────────────── */
+      --muted: oklch(0.68 0.037 176.5);         /* Green 200 #97A6A3 */
+
+      /* ── Default (subtle backgrounds for chips, tags) ────────────────────── */
+      --default: oklch(0.934 0.009 175.9);      /* Green 50 #E8ECEB */
+      --default-foreground: oklch(0.309 0.077 170.8); /* Green 500 #1C3E38 */
+
+      /* ── Accent (primary brand action color) ─────────────────────────────── */
+      --accent: oklch(0.286 0.072 171.2);       /* Green 600 #193833 */
+      --accent-foreground: oklch(100% 0 0);     /* White */
+
+      /* ── Form Field Colors ───────────────────────────────────────────────── */
+      --field-background: oklch(100% 0 0);      /* White */
+      --field-foreground: oklch(0% 0 0);        /* Black */
+      --field-placeholder: oklch(0.68 0.037 176.5); /* Muted */
+      --field-border: transparent;
+
+      /* ── Status Colors ───────────────────────────────────────────────────── */
+      --success: oklch(0.309 0.077 170.8);      /* Brand Green 500 #1C3E38 */
+      --success-foreground: oklch(100% 0 0);    /* White */
+
+      --warning: oklch(0.588 0.193 53.7);       /* Brand Orange 500 #F07400 */
+      --warning-foreground: oklch(0% 0 0);      /* Black */
+
+      --danger: oklch(0.566 0.223 27.5);        /* Brand Red 500 #E9383E */
+      --danger-foreground: oklch(100% 0 0);     /* White */
+
+      /* ── Component Colors ─────────────────────────────────────────────────── */
+      --segment: oklch(100% 0 0);               /* White */
+      --segment-foreground: oklch(0.325 0 0);   /* Grey */
+
+      /* ── Misc Colors ──────────────────────────────────────────────────────── */
+      --border: oklch(0.862 0 0);               /* Light Silver #D9D9D9 */
+      --separator: oklch(0.778 0.027 177.2);    /* Green 200 */
+      --focus: var(--accent);
+      --link: oklch(0.309 0.077 170.8);         /* Green 500 */
+
+      /* ── Shadows ──────────────────────────────────────────────────────────── */
+      --surface-shadow:
+        0 2px 4px 0 rgba(0, 0, 0, 0.04),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06),
+        0 0 1px 0 rgba(0, 0, 0, 0.06);
+      --overlay-shadow:
+        0 2px 8px 0 rgba(0, 0, 0, 0.06),
+        0 -6px 12px 0 rgba(0, 0, 0, 0.02),
+        0 14px 28px 0 rgba(0, 0, 0, 0.08);
+      --field-shadow:
+        0 2px 4px 0 rgba(0, 0, 0, 0.04),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06),
+        0 0 1px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    @variant dark {
+      /* ── Background & Foreground ─────────────────────────────────────────── */
+      --background: oklch(0.168 0.046 174.8);   /* Dark Green #0C1A18 */
+      --foreground: oklch(0.934 0.009 175.9);   /* Green 50 #E8ECEB */
+
+      /* ── Surface ─────────────────────────────────────────────────────────── */
+      --surface: oklch(0.2 0.054 173.9);        /* Green 800 #0F221F */
+      --surface-foreground: oklch(0.934 0.009 175.9);
+
+      --surface-secondary: oklch(0.238 0.063 172.5);  /* Green 700 #142C28 */
+      --surface-secondary-foreground: oklch(0.934 0.009 175.9);
+
+      --surface-tertiary: oklch(0.286 0.072 171.2);   /* Green 600 #193833 */
+      --surface-tertiary-foreground: oklch(0.934 0.009 175.9);
+
+      /* ── Overlay ─────────────────────────────────────────────────────────── */
+      --overlay: oklch(0.238 0.063 172.5);      /* Dark Charcoal Green #142C28 */
+      --overlay-foreground: oklch(0.934 0.009 175.9);
+
+      /* ── Muted ───────────────────────────────────────────────────────────── */
+      --muted: oklch(0.565 0.052 177.3);        /* Green 300 #677E7A */
+
+      /* ── Default ─────────────────────────────────────────────────────────── */
+      --default: oklch(0.309 0.077 170.8);      /* Green 500 #1C3E38 - Dark Charcoal Green */
+      --default-foreground: oklch(0.934 0.009 175.9); /* Green 50 */
+
+      /* ── Accent ───────────────────────────────────────────────────────────── */
+      --accent: oklch(0.468 0.065 175.4);       /* Green 400 #496560 (lighter for dark bg) */
+      --accent-foreground: oklch(100% 0 0);     /* White */
+
+      /* ── Form Field Colors ───────────────────────────────────────────────── */
+      --field-background: oklch(0.238 0.063 172.5); /* Green 700 */
+      --field-foreground: oklch(0.934 0.009 175.9);
+      --field-placeholder: oklch(0.565 0.052 177.3);
+      --field-border: transparent;
+
+      /* ── Status Colors ───────────────────────────────────────────────────── */
+      --success: oklch(0.468 0.065 175.4);      /* Green 400 #496560 */
+      --success-foreground: oklch(100% 0 0);
+
+      --warning: oklch(0.662 0.175 55.5);       /* Orange 400 #F39033 (brighter on dark bg) */
+      --warning-foreground: oklch(0% 0 0);
+
+      --danger: oklch(0.601 0.236 27.4);        /* Red 400 #FF4B51 (brighter on dark bg) */
+      --danger-foreground: oklch(100% 0 0);
+
+      /* ── Component Colors ─────────────────────────────────────────────────── */
+      --segment: oklch(0.286 0.072 171.2);      /* Green 600 */
+      --segment-foreground: oklch(0.934 0.009 175.9);
+
+      /* ── Misc Colors ──────────────────────────────────────────────────────── */
+      --border: oklch(0.309 0.077 170.8);       /* Green 500 #1C3E38 */
+      --separator: oklch(0.468 0.065 175.4);    /* Green 400 */
+      --focus: var(--accent);
+      --link: oklch(0.68 0.037 176.5);          /* Green 200 */
+
+      /* ── Shadows ──────────────────────────────────────────────────────────── */
+      --surface-shadow: 0 0 0 0 transparent inset;
+      --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+      --field-shadow: 0 0 0 0 transparent inset;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Custom Brand Colors — expose to Tailwind/Uniwind via @theme inline
+   Reference: https://v3.heroui.com/docs/native/getting-started/theming#adding-custom-colors
+   --------------------------------------------------------------------------- */
+
+/* Make brand palette available as Tailwind utility classes */
+@theme inline {
+  /* ── Green Scale ─────────────────────────────────────────────────────────── */
+  --color-brand-green-900: var(--brand-green-900);
+  --color-brand-green-800: var(--brand-green-800);
+  --color-brand-green-700: var(--brand-green-700);
+  --color-brand-green-600: var(--brand-green-600);
+  --color-brand-green-500: var(--brand-green-500);
+  --color-brand-green-400: var(--brand-green-400);
+  --color-brand-green-300: var(--brand-green-300);
+  --color-brand-green-200: var(--brand-green-200);
+  --color-brand-green-100: var(--brand-green-100);
+  --color-brand-green-50:  var(--brand-green-50);
+
+  /* ── Red Scale ───────────────────────────────────────────────────────────── */
+  --color-brand-red-900: var(--brand-red-900);
+  --color-brand-red-800: var(--brand-red-800);
+  --color-brand-red-700: var(--brand-red-700);
+  --color-brand-red-600: var(--brand-red-600);
+  --color-brand-red-500: var(--brand-red-500);
+  --color-brand-red-400: var(--brand-red-400);
+  --color-brand-red-300: var(--brand-red-300);
+  --color-brand-red-200: var(--brand-red-200);
+  --color-brand-red-100: var(--brand-red-100);
+  --color-brand-red-50:  var(--brand-red-50);
+
+  /* ── Orange Scale ────────────────────────────────────────────────────────── */
+  --color-brand-orange-900: var(--brand-orange-900);
+  --color-brand-orange-800: var(--brand-orange-800);
+  --color-brand-orange-700: var(--brand-orange-700);
+  --color-brand-orange-600: var(--brand-orange-600);
+  --color-brand-orange-500: var(--brand-orange-500);
+  --color-brand-orange-400: var(--brand-orange-400);
+  --color-brand-orange-300: var(--brand-orange-300);
+  --color-brand-orange-200: var(--brand-orange-200);
+  --color-brand-orange-100: var(--brand-orange-100);
+  --color-brand-orange-50:  var(--brand-orange-50);
+
+  /* ── Neutral ─────────────────────────────────────────────────────────────── */
+  --color-brand-black:      var(--brand-black);
+  --color-brand-grey:       var(--brand-grey);
+  --color-brand-silver:     var(--brand-silver);
+  --color-brand-flashwhite: var(--brand-flashwhite);
+  --color-brand-white:      var(--brand-white);
+
+  /* ── Extra Custom Flowpay Primitives ─────────────────────────────────────── */
+  --color-dark-green:           var(--dark-green);
+  --color-dark-charcoal-green:  var(--dark-charcoal-green);
+}
