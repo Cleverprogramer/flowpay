@@ -20,11 +20,11 @@
       "version": "1.0.0",
       "dependencies": {
         "@better-auth/expo": "catalog:",
-        "@flowpay/env": "workspace:*",
-        "@flowpay/schema": "workspace:*",
         "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
         "@expo/metro-runtime": "~55.0.6",
         "@expo/vector-icons": "^15.0.3",
+        "@flowpay/env": "workspace:*",
+        "@flowpay/schema": "workspace:*",
         "@gorhom/bottom-sheet": "^5",
         "@react-native-community/datetimepicker": "^9.1.0",
         "@react-native-community/netinfo": "^12.0.1",
@@ -371,16 +371,6 @@
 
     "@better-fetch/fetch": ["@better-fetch/fetch@1.1.21", "", {}, "sha512-/ImESw0sskqlVR94jB+5+Pxjf+xBwDZF/N5+y2/q4EqD7IARUTSpPfIo8uf39SYpCxyOCtbyYpUrZ3F/k0zT4A=="],
 
-    "@flowpay/auth": ["@flowpay/auth@workspace:packages/auth"],
-
-    "@flowpay/config": ["@flowpay/config@workspace:packages/config"],
-
-    "@flowpay/db": ["@flowpay/db@workspace:packages/db"],
-
-    "@flowpay/env": ["@flowpay/env@workspace:packages/env"],
-
-    "@flowpay/schema": ["@flowpay/schema@workspace:packages/schema"],
-
     "@chevrotain/cst-dts-gen": ["@chevrotain/cst-dts-gen@10.5.0", "", { "dependencies": { "@chevrotain/gast": "10.5.0", "@chevrotain/types": "10.5.0", "lodash": "4.17.21" } }, "sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw=="],
 
     "@chevrotain/gast": ["@chevrotain/gast@10.5.0", "", { "dependencies": { "@chevrotain/types": "10.5.0", "lodash": "4.17.21" } }, "sha512-pXdMJ9XeDAbgOWKuD1Fldz4ieCs6+nLNmyVhe2gZVqoO7v8HXuHYs5OV2EzUtbuai37TlOAQHrTDvxMnvMJz3A=="],
@@ -524,6 +514,16 @@
     "@expo/ws-tunnel": ["@expo/ws-tunnel@1.0.6", "", {}, "sha512-nDRbLmSrJar7abvUjp3smDwH8HcbZcoOEa5jVPUv9/9CajgmWw20JNRwTuBRzWIWIkEJDkz20GoNA+tSwUqk0Q=="],
 
     "@expo/xcpretty": ["@expo/xcpretty@4.4.1", "", { "dependencies": { "@babel/code-frame": "^7.20.0", "chalk": "^4.1.0", "js-yaml": "^4.1.0" }, "bin": { "excpretty": "build/cli.js" } }, "sha512-KZNxZvnGCtiM2aYYZ6Wz0Ix5r47dAvpNLApFtZWnSoERzAdOMzVBOPysBoM0JlF6FKWZ8GPqgn6qt3dV/8Zlpg=="],
+
+    "@flowpay/auth": ["@flowpay/auth@workspace:packages/auth"],
+
+    "@flowpay/config": ["@flowpay/config@workspace:packages/config"],
+
+    "@flowpay/db": ["@flowpay/db@workspace:packages/db"],
+
+    "@flowpay/env": ["@flowpay/env@workspace:packages/env"],
+
+    "@flowpay/schema": ["@flowpay/schema@workspace:packages/schema"],
 
     "@gorhom/bottom-sheet": ["@gorhom/bottom-sheet@5.2.8", "", { "dependencies": { "@gorhom/portal": "1.0.14", "invariant": "^2.2.4" }, "peerDependencies": { "@types/react": "*", "@types/react-native": "*", "react": "*", "react-native": "*", "react-native-gesture-handler": ">=2.16.1", "react-native-reanimated": ">=3.16.0 || >=4.0.0-" }, "optionalPeers": ["@types/react", "@types/react-native"] }, "sha512-+N27SMpbBxXZQ/IA2nlEV6RGxL/qSFHKfdFKcygvW+HqPG5jVNb1OqehLQsGfBP+Up42i0gW5ppI+DhpB7UCzA=="],
 

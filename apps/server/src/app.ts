@@ -9,6 +9,7 @@ import { budgetRoutes } from "./routes/budget.routes";
 import { transactionRoutes } from "./routes/transaction.routes";
 import { notificationRoutes } from "./routes/notification.routes";
 import { invoiceRoutes } from "./routes/invoice.routes";
+import { goalRoutes } from "./routes/goal.routes";
 
 const app = new Hono()
   .use(logger())
@@ -28,7 +29,8 @@ const app = new Hono()
   .route("/api/budget", budgetRoutes)
   .route("/api/invoice", invoiceRoutes)
   .route("/api/transaction", transactionRoutes)
-  .route("/api/notification", notificationRoutes);
+  .route("/api/notification", notificationRoutes)
+  .route("/api/goal", goalRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
