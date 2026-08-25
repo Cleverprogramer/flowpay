@@ -23,8 +23,8 @@ export const walletRoutes = new Hono()
   .use(authMiddleware)
   .get("/", zValidator("query", listWalletsQuerySchema), async (c) => {
     const userId = c.get("userId");
-    const { archived } = c.req.valid("query");
-    const data = await listWallets(userId, { archived });
+    const { archived, type } = c.req.valid("query");
+    const data = await listWallets(userId, { archived, type });
     return c.json({ data });
   })
   .get("/default", async (c) => {

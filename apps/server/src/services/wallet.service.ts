@@ -6,10 +6,11 @@ import { recordBalanceChange } from "./balance-audit.service";
 
 export async function listWallets(
   userId: string,
-  options?: { archived?: boolean },
+  options?: { archived?: boolean; type?: "bank" | "credit" | "cash" | "mobile" },
 ) {
   const conditions = [eq(wallet.userId, userId)];
   conditions.push(eq(wallet.archived, options?.archived ?? false));
+  if (options?.type) conditions.push(eq(wallet.type, options.type));
   return db
     .select()
     .from(wallet)

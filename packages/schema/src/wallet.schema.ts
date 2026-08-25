@@ -23,6 +23,7 @@ export const listWalletsQuerySchema = z.object({
     .enum(["true", "false"])
     .default("false")
     .transform((value) => value === "true"),
+  type: z.enum(["bank", "credit", "cash", "mobile"]).optional(),
 });
 
 export const walletSchema = z.object({
