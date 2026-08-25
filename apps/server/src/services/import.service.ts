@@ -47,5 +47,13 @@ export async function commitImportedTransactions(
     }
   });
 
-  return { imported };
+  const [updatedWallet] = await db
+    .select({ balance: wallet.balance })
+    .from(wallet)
+    .where(eq(wallet.id, data.walletId));
+
+  return {
+    imported,
+    newBalance: updatedWallet ? Number(updatedWallet.balance) : null,
+  };
 }
