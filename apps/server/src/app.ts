@@ -59,6 +59,7 @@ const app = new Hono()
     }),
   )
   .on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+  .use("/api/auth/*", createRateLimiter({ windowMs: 60_000, max: 20 }))
   .route("/api/health", healthRoutes)
   .use("/api/*", createRateLimiter({ windowMs: 60_000, max: 120 }))
 
@@ -96,6 +97,7 @@ app.onError((err, c) => {
   return c.json(
     {
       error: err.message || "Internal Server Error",
+      requestId: c.res.headers.get("X-Request-Id") ?? undefined,
       ...(env.NODE_ENV === "development" ? { stack: err.stack } : {}),
     },
     500,

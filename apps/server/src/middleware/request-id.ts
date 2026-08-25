@@ -10,11 +10,9 @@ export const requestIdMiddleware: MiddlewareHandler = async (c, next) => {
   const requestId =
     c.req.header(REQUEST_ID_HEADER) ?? generateRequestId();
 
-  await next();
+  c.header(REQUEST_ID_HEADER, requestId);
 
-  if (!c.res.headers.get(REQUEST_ID_HEADER)) {
-    c.header(REQUEST_ID_HEADER, requestId);
-  }
+  await next();
 };
 
 export { REQUEST_ID_HEADER };
