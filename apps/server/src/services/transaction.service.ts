@@ -221,8 +221,7 @@ export async function deleteTransaction(userId: string, id: string) {
 export async function getTransactionSummary(
   userId: string,
   params?: { startDate?: string; endDate?: string; walletId?: string },
-) {
-  const conditions: ReturnType<typeof eq>[] = [eq(transaction.userId, userId)];
+) {  const conditions: ReturnType<typeof eq>[] = [eq(transaction.userId, userId)];
   if (params?.walletId)
     conditions.push(eq(transaction.walletId, params.walletId));
   if (params?.startDate)
@@ -251,4 +250,44 @@ export async function getTransactionSummary(
     balance: Number(income?.total ?? 0) - Number(expense?.total ?? 0),
     transactionCount: (income?.count ?? 0) + (expense?.count ?? 0),
   };
+}
+
+export async function exportTransactions(
+  userId: string,
+  params: {
+    type?: "income" | "expense";
+    walletId?: string;
+    categoryId?: string;
+    startDate?: string;
+    endDate?: string;
+  },
+) {
+  const conditions = [eq(transaction.userId, userId)];
+  if (params.type) conditions.push(eq(transaction.type, params.type));
+  if (params.walletId)
+    conditions.push(eq(transaction.walletId, params.walletId));
+  if (params.categoryId)
+    conditions.push(eq(transaction.categoryId, params.categoryId));
+  if (params.startDate)
+    conditions.push(
+      gte(transaction.transactionDate, new Date(params.startDate)),
+    );
+  if (params.endDate)
+    conditions.push(lte(transaction.transactionDate, new Date(params.endDate)));
+
+  return db
+    .select({
+      date: transaction.transactionDate,
+      description: transaction.description,
+      category: category.name,
+      wallet: wallet.name,
+      type: transaction.type,
+      amount: transaction.amount,
+      note: transaction.note,
+    })
+    .from(transaction)
+    .leftJoin(category, eq(transaction.categoryId, category.id))
+    .leftJoin(wallet, eq(transaction.walletId, wallet.id))
+    .where(and(...conditions))
+    .orderBy(desc(transaction.transactionDate));
 }
