@@ -225,7 +225,9 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Notification Prefs | `GET /api/notification-preference`, `PUT /api/notification-preference` |
 | Dashboard | `GET /api/dashboard` |
 | Currency Rates | `GET /api/currency-rate`, `GET /api/currency-rate/convert`, `PUT /api/currency-rate`, `DELETE /api/currency-rate/:id` |
-| Health | `GET /api/health` |
+| Health | `GET /api/health`, `GET /api/health/meta` |
+| Wallets (extra) | `PATCH /api/wallet/:id/balance`, `GET /api/wallet/:id/limit-status`, `POST /api/wallet/recalculate-balances` |
+| Notifications (extra) | `GET /api/notification/unread-count`, `DELETE /api/notification/all` |
 | Transfers | `GET /api/transfer`, `POST /api/transfer` |
 | Tags | `GET /api/tag`, `GET /api/tag/:id/transactions`, `POST /api/tag`, `POST /api/tag/attach`, `DELETE /api/tag/:id`, `DELETE /api/tag/:id/transactions/:transactionId` |
 | Invoice Payments | `GET /api/invoice-payment/invoice/:invoiceId`, `POST /api/invoice-payment/invoice/:invoiceId` |
@@ -237,6 +239,14 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Templates | `GET /api/template`, `POST /api/template`, `POST /api/template/:id/apply`, `PUT /api/template/:id`, `DELETE /api/template/:id` |
 | Insights | `GET /api/insight/subscriptions`, `GET /api/insight/no-spend` |
 | Export | `GET /api/export` |
+| Reports (extra) | `GET /api/report/daily-activity?month=YYYY-MM`, `GET /api/report/top-descriptions` |
+| Categories (extra) | `GET /api/category/:id` |
+| Recurring (extra) | `POST /api/recurring-rule/:id/pause`, `POST /api/recurring-rule/:id/resume` |
+| Invoices (extra) | `GET /api/invoice/next-number`, `GET /api/budget/summary`, `GET /api/goal/summary` |
+
+## Continuous Integration
+
+GitHub Actions runs `bun run check-types` and `bun run test` on every push and pull request to `main`.
 | Invoices | `GET /api/invoice`, `GET /api/invoice/:id`, `GET /api/invoice/:id/html`, `POST /api/invoice/process-reminders`, `POST /api/invoice`, `PATCH /api/invoice/:id/status`, `DELETE /api/invoice/:id` |
 | Notifications | `GET /api/notification`, `POST /api/notification`, `PATCH /api/notification/mark-all-read`, `PATCH /api/notification/:id/read` |
 
