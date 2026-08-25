@@ -322,3 +322,31 @@ export function renderInvoiceHtml(
 </body>
 </html>`;
 }
+
+export async function getNextInvoiceNumber(userId: string) {
+  const [result] = await db
+    .select({ count: count() })
+    .from(invoice)
+    .where(eq(invoice.userId, userId));
+
+  const baseSequence = (result?.count ?? 0) + 1;
+  let sequence = baseSequence;
+  let candidate = `INV-${String(sequence).padStart(4, "0")}`;
+
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const [existing] = await db
+      .select({ id: invoice.id })
+      .from(invoice)
+      .where(
+        and(
+          eq(invoice.userId, userId),
+          eq(invoice.invoiceNumber, candidate),
+        ),
+      );
+    if (!existing) break;
+    sequence++;
+    candidate = `INV-${String(sequence).padStart(4, "0")}`;
+  }
+
+  return { invoiceNumber: candidate };
+}
