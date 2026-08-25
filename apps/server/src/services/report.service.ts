@@ -1,0 +1,118 @@
+import { db } from "@flowpay/db";
+import { category } from "@flowpay/db/schema/category";
+import { transaction } from "@flowpay/db/schema/transaction";
+import { wallet } from "@flowpay/db/schema/wallet";
+import { and, eq, gte, lte, sql, desc } from "drizzle-orm";
+
+export async function getSpendingByCategory(
+  userId: string,
+  params?: { startDate?: string; endDate?: string },
+) {
+  const conditions = [
+    eq(transaction.userId, userId),
+    eq(transaction.type, "expense"),
+  ];
+  if (params?.startDate)
+    conditions.push(gte(transaction.transactionDate, new Date(params.startDate)));
+  if (params?.endDate)
+    conditions.push(lte(transaction.transactionDate, new Date(params.endDate)));
+
+  const rows = await db
+    .select({
+      categoryId: transaction.categoryId,
+      categoryName: category.name,
+      categoryEmoji: category.emoji,
+      categoryColor: category.color,
+      total: sql<string>`COALESCE(SUM(${transaction.amount}), 0)`,
+      count: sql<number>`COUNT(*)::int`,
+    })
+    .from(transaction)
+    .leftJoin(category, eq(transaction.categoryId, category.id))
+    .where(and(...conditions))
+    .groupBy(
+      transaction.categoryId,
+      category.name,
+      category.emoji,
+      category.color,
+    )
+    .orderBy(desc(sql`SUM(${transaction.amount})`));
+
+  const grandTotal = rows.reduce((sum, row) => sum + Number(row.total), 0);
+
+  return rows.map((row) => ({
+    ...row,
+    total: Number(row.total),
+    percentage:
+      grandTotal > 0
+        ? Math.round((Number(row.total) / grandTotal) * 100)
+        : 0,
+  }));
+}
+
+export async function getMonthlyTrends(userId: string, months: number) {
+  const rows = await db
+    .select({
+      month: sql<string>`TO_CHAR(DATE_TRUNC('month', ${transaction.transactionDate}), 'YYYY-MM')`,
+      type: transaction.type,
+      total: sql<string>`COALESCE(SUM(${transaction.amount}), 0)`,
+      count: sql<number>`COUNT(*)::int`,
+    })
+    .from(transaction)
+    .where(eq(transaction.userId, userId))
+    .groupBy(
+      sql`DATE_TRUNC('month', ${transaction.transactionDate})`,
+      transaction.type,
+    )
+    .orderBy(sql`DATE_TRUNC('month', ${transaction.transactionDate}) DESC`)
+    .limit(months * 2);
+
+  const byMonth = new Map<
+    string,
+    {
+      month: string;
+      income: number;
+      expense: number;
+      net: number;
+      transactionCount: number;
+    }
+  >();
+
+  for (const row of rows) {
+    const entry = byMonth.get(row.month) ?? {
+      month: row.month,
+      income: 0,
+      expense: 0,
+      net: 0,
+      transactionCount: 0,
+    };
+    if (row.type === "income") entry.income = Number(row.total);
+    else entry.expense = Number(row.total);
+    entry.transactionCount += row.count;
+    entry.net = entry.income - entry.expense;
+    byMonth.set(row.month, entry);
+  }
+
+  return Array.from(byMonth.values())
+    .sort((a, b) => a.month.localeCompare(b.month))
+    .slice(-months);
+}
+
+export async function getWalletBreakdown(userId: string) {
+  const rows = await db
+    .select({
+      walletId: wallet.id,
+      walletName: wallet.name,
+      walletType: wallet.type,
+      currency: wallet.currency,
+      balance: wallet.balance,
+      transactionCount: sql<number>`(
+        SELECT COUNT(*)::int FROM ${transaction}
+        WHERE ${transaction.walletId} = ${wallet.id}
+      )`,
+    })
+    .from(wallet)
+    .where(eq(wallet.userId, userId))
+    .orderBy(desc(wallet.balance));
+
+  return rows.map((row) => ({ ...row, balance: Number(row.balance) }));
+}

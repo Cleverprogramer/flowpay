@@ -6,3 +6,4 @@ export * from "./wallet.schema";
 export * from "./invoice.schema";
 export * from "./goal.schema";
 export * from "./recurring-rule.schema";
+export * from "./report.schema";
