@@ -58,12 +58,23 @@ export async function getInvoiceById(userId: string, id: string) {
     .from(invoiceItem)
     .where(eq(invoiceItem.invoiceId, id));
 
+  const daysOverdue =
+    result.status === "overdue"
+      ? Math.max(
+          0,
+          Math.floor(
+            (Date.now() - result.dueDate.getTime()) / (24 * 60 * 60 * 1000),
+          ),
+        )
+      : 0;
+
   return {
     ...result,
     subtotal: Number(result.subtotal),
     taxRate: Number(result.taxRate),
     taxAmount: Number(result.taxAmount),
     total: Number(result.total),
+    daysOverdue,
     items: items.map((item) => ({
       ...item,
       unitPrice: Number(item.unitPrice),
