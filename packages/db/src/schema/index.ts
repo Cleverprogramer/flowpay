@@ -5,4 +5,5 @@ export * from "./category";
 export * from "./wallet";
 export * from "./notification";
 export * from "./invoice";
+export * from "./goal";
 export {};

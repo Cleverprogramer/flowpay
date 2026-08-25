@@ -15,6 +15,13 @@
       "when": 1774236696738,
       "tag": "0001_fine_the_enforcers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787656284215,
+      "tag": "0002_sour_puppet_master",
+      "breakpoints": true
     }
   ]
 }
