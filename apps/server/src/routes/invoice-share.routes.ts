@@ -30,13 +30,16 @@ export const invoiceShareRoutes = new Hono()
     },
   );
 
-export const publicInvoiceRoutes = new Hono().get(
-  "/invoice/:token",
-  async (c) => {
+export const publicInvoiceRoutes = new Hono()
+  .get("/robots.txt", (c) =>
+    c.body("User-agent: *\nDisallow: /\n", 200, {
+      "Content-Type": "text/plain",
+    }),
+  )
+  .get("/invoice/:token", async (c) => {
     const token = c.req.param("token");
     const html = await getPublicInvoiceHtml(token);
     if (!html) return c.html("<h1>404 - Invoice not found</h1>", 404);
 
     return c.html(html.replace("</body>", `<div style="text-align:center;padding:16px;font-size:11px;color:#9CA3AF;">Powered by FlowPay</div></body>`));
-  },
-);
+  });
