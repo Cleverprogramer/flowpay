@@ -76,6 +76,7 @@ export async function createInvoice(
   userId: string,
   data: {
     invoiceNumber: string;
+    clientId?: string;
     clientName: string;
     clientEmail?: string;
     currency?: string;
@@ -106,6 +107,7 @@ export async function createInvoice(
     .values({
       userId,
       invoiceNumber: data.invoiceNumber,
+      clientId: data.clientId,
       clientName: data.clientName,
       clientEmail: data.clientEmail,
       currency: data.currency ?? "USD",
