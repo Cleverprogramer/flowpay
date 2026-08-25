@@ -27,6 +27,9 @@ export const budget = pgTable(
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date").notNull(),
     isActive: boolean("is_active").notNull().default(true),
+    alertLevel: text("alert_level", {
+      enum: ["none", "warning", "exceeded"],
+    }).notNull().default("none"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

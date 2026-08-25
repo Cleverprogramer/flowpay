@@ -4,6 +4,7 @@ import { transaction } from "@flowpay/db/schema/transaction";
 import { wallet } from "@flowpay/db/schema/wallet";
 import { eq, and, desc, sql, count, gte, lte } from "drizzle-orm";
 import { createNotification } from "./notification.service";
+import { checkBudgetAlerts } from "./budget-alert.service";
 
 export async function listTransactions(
   userId: string,
@@ -160,6 +161,13 @@ export async function createTransaction(
     description: `You added $${data.amount.toLocaleString()} for "${data.description}"`,
     type: data.type === "income" ? "success" : "alert",
   }).catch((err) => console.error("Failed to create notification:", err));
+
+  // Evaluate budget alerts after every expense so warnings stay current
+  if (data.type === "expense") {
+    await checkBudgetAlerts(userId).catch((err) =>
+      console.error("Failed to check budget alerts:", err),
+    );
+  }
 
   return { ...result, amount: Number(result?.amount) };
 }

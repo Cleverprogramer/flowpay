@@ -1,0 +1,1 @@
+ALTER TABLE "budget" ADD COLUMN "alert_level" text DEFAULT 'none' NOT NULL;
