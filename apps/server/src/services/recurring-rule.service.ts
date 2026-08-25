@@ -8,11 +8,23 @@ import { recordBalanceChange } from "./balance-audit.service";
 
 const MAX_CATCH_UP_OCCURRENCES = 100;
 
-export async function listRecurringRules(userId: string) {
+export async function listRecurringRules(
+  userId: string,
+  options?: {
+    interval?: "daily" | "weekly" | "monthly" | "yearly";
+    isActive?: boolean;
+  },
+) {
+  const conditions = [eq(recurringRule.userId, userId)];
+  if (options?.interval)
+    conditions.push(eq(recurringRule.interval, options.interval));
+  if (options?.isActive !== undefined)
+    conditions.push(eq(recurringRule.isActive, options.isActive));
+
   return db
     .select()
     .from(recurringRule)
-    .where(eq(recurringRule.userId, userId))
+    .where(and(...conditions))
     .orderBy(desc(recurringRule.createdAt));
 }
 
@@ -227,8 +239,14 @@ export async function resumeRecurringRule(userId: string, id: string) {
   return updateRecurringRule(userId, id, { isActive: true });
 }
 
-export async function listRecurringRulesWithCosts(userId: string) {
-  const rules = await listRecurringRules(userId);
+export async function listRecurringRulesWithCosts(
+  userId: string,
+  options?: {
+    interval?: "daily" | "weekly" | "monthly" | "yearly";
+    isActive?: boolean;
+  },
+) {
+  const rules = await listRecurringRules(userId, options);
   return rules.map((rule) => ({
     ...rule,
     amount: Number(rule.amount),

@@ -20,7 +20,18 @@ export const recurringRuleRoutes = new Hono()
   .use(authMiddleware)
   .get("/", async (c) => {
     const userId = c.get("userId");
-    const data = await listRecurringRulesWithCosts(userId);
+    const interval = c.req.query("interval");
+    const isActive = c.req.query("isActive");
+    const data = await listRecurringRulesWithCosts(userId, {
+      interval:
+        interval === "daily" ||
+        interval === "weekly" ||
+        interval === "monthly" ||
+        interval === "yearly"
+          ? interval
+          : undefined,
+      isActive: isActive === "true" ? true : isActive === "false" ? false : undefined,
+    });
     return c.json({ data });
   })
   .post("/process-due", async (c) => {
