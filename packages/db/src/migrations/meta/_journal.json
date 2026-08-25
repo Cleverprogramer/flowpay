@@ -57,6 +57,13 @@
       "when": 1787657421010,
       "tag": "0007_wet_echo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1787657510340,
+      "tag": "0008_last_scalphunter",
+      "breakpoints": true
     }
   ]
 }
