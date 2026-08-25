@@ -6,4 +6,5 @@ export * from "./wallet";
 export * from "./notification";
 export * from "./invoice";
 export * from "./goal";
+export * from "./recurring-rule";
 export {};

@@ -7,6 +7,7 @@ import { budget } from "./budget";
 import { notification } from "./notification";
 import { invoice, invoiceItem } from "./invoice";
 import { goal } from "./goal";
+import { recurringRule } from "./recurring-rule";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -93,5 +94,20 @@ export const goalRelations = relations(goal, ({ one }) => ({
   wallet: one(wallet, {
     fields: [goal.walletId],
     references: [wallet.id],
+  }),
+}));
+
+export const recurringRuleRelations = relations(recurringRule, ({ one }) => ({
+  user: one(user, {
+    fields: [recurringRule.userId],
+    references: [user.id],
+  }),
+  wallet: one(wallet, {
+    fields: [recurringRule.walletId],
+    references: [wallet.id],
+  }),
+  category: one(category, {
+    fields: [recurringRule.categoryId],
+    references: [category.id],
   }),
 }));
