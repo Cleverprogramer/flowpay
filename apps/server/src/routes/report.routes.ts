@@ -7,6 +7,8 @@ import {
   getWalletBreakdown,
   getDailyActivity,
   getTopDescriptions,
+  getWeekdaySpending,
+  getYearInReview,
 } from "@/services/report.service";
 import {
   reportRangeSchema,
@@ -58,5 +60,19 @@ export const reportRoutes = new Hono()
   .get("/top-descriptions", async (c) => {
     const userId = c.get("userId");
     const data = await getTopDescriptions(userId);
+    return c.json({ data });
+  })
+  .get("/weekday-spending", async (c) => {
+    const userId = c.get("userId");
+    const data = await getWeekdaySpending(userId);
+    return c.json({ data });
+  })
+  .get("/year-in-review", async (c) => {
+    const userId = c.get("userId");
+    const year = Number(c.req.query("year") ?? new Date().getFullYear());
+    if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+      return c.json({ error: "Invalid year" }, 400);
+    }
+    const data = await getYearInReview(userId, year);
     return c.json({ data });
   });

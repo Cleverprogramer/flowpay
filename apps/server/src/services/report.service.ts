@@ -175,3 +175,71 @@ export async function getTopDescriptions(userId: string, limit = 10) {
     count: row.count,
   }));
 }
+
+export async function getWeekdaySpending(userId: string) {
+  const rows = await db
+    .select({
+      weekday: sql<string>`EXTRACT(DOW FROM ${transaction.transactionDate})::int`,
+      total: sql<string>`COALESCE(SUM(${transaction.amount}), 0)`,
+      count: sql<number>`COUNT(*)::int`,
+    })
+    .from(transaction)
+    .where(
+      and(eq(transaction.userId, userId), eq(transaction.type, "expense")),
+    )
+    .groupBy(sql`EXTRACT(DOW FROM ${transaction.transactionDate})`);
+
+  const names = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const row = rows.find((item) => Number(item.weekday) === index);
+    return {
+      weekday: names[index]!,
+      total: row ? Number(row.total) : 0,
+      count: row?.count ?? 0,
+    };
+  });
+}
+
+export async function getYearInReview(userId: string, year: number) {
+  const start = new Date(Date.UTC(year, 0, 1));
+  const end = new Date(Date.UTC(year, 11, 31, 23, 59, 59));
+
+  const rows = await db
+    .select({
+      month: sql<string>`EXTRACT(MONTH FROM ${transaction.transactionDate})::int`,
+      type: transaction.type,
+      total: sql<string>`COALESCE(SUM(${transaction.amount}), 0)`,
+    })
+    .from(transaction)
+    .where(
+      and(
+        eq(transaction.userId, userId),
+        gte(transaction.transactionDate, start),
+        lte(transaction.transactionDate, end),
+      ),
+    )
+    .groupBy(
+      sql`EXTRACT(MONTH FROM ${transaction.transactionDate})`,
+      transaction.type,
+    );
+
+  return Array.from({ length: 12 }, (_, index) => {
+    const monthRows = rows.filter((row) => Number(row.month) === index + 1);
+    const income = monthRows.find((row) => row.type === "income");
+    const expense = monthRows.find((row) => row.type === "expense");
+    return {
+      month: index + 1,
+      income: income ? Number(income.total) : 0,
+      expense: expense ? Number(expense.total) : 0,
+    };
+  });
+}
