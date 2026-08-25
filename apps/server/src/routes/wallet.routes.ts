@@ -8,12 +8,14 @@ import {
   createWallet,
   updateWallet,
   deleteWallet,
+  adjustWalletBalance,
 } from "@/services/wallet.service";
 import { getWalletLimitStatus } from "@/services/wallet-limit.service";
 import {
   createWalletSchema,
   updateWalletSchema,
   listWalletsQuerySchema,
+  adjustBalanceSchema,
 } from "@flowpay/schema/wallet.schema";
 
 export const walletRoutes = new Hono()
@@ -49,6 +51,18 @@ export const walletRoutes = new Hono()
     if (!data) return c.json({ error: "Wallet not found" }, 404);
     return c.json({ data });
   })
+  .patch(
+    "/:id/balance",
+    zValidator("json", adjustBalanceSchema),
+    async (c) => {
+      const userId = c.get("userId");
+      const id = c.req.param("id");
+      const body = c.req.valid("json");
+      const data = await adjustWalletBalance(userId, id, body.amount);
+      if (!data) return c.json({ error: "Wallet not found" }, 404);
+      return c.json({ data });
+    },
+  )
   .put("/:id", zValidator("json", updateWalletSchema), async (c) => {
     const userId = c.get("userId");
     const id = c.req.param("id");

@@ -38,7 +38,12 @@ export const walletSchema = z.object({
   createdAt: z.string().or(z.date()),
 });
 
+export const adjustBalanceSchema = z.object({
+  amount: z.number().refine((value) => value !== 0, "Amount cannot be zero"),
+});
+
 export type Wallet = z.infer<typeof walletSchema>;
 export type CreateWalletInput = z.infer<typeof createWalletSchema>;
 export type UpdateWalletInput = z.infer<typeof updateWalletSchema>;
 export type ListWalletsQuery = z.infer<typeof listWalletsQuerySchema>;
+export type AdjustBalanceInput = z.infer<typeof adjustBalanceSchema>;

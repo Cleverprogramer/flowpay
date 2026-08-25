@@ -1,6 +1,7 @@
 import { db } from "@flowpay/db";
 import { wallet } from "@flowpay/db/schema/wallet";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
+import { recordBalanceChange } from "./balance-audit.service";
 
 export async function listWallets(
   userId: string,
@@ -97,4 +98,28 @@ export async function deleteWallet(userId: string, id: string) {
     .where(and(eq(wallet.id, id), eq(wallet.userId, userId)))
     .returning();
   return result ?? null;
+}
+
+export async function adjustWalletBalance(
+  userId: string,
+  id: string,
+  amount: number,
+) {
+  const [updated] = await db
+    .update(wallet)
+    .set({ balance: sql`${wallet.balance} + ${amount}` })
+    .where(and(eq(wallet.id, id), eq(wallet.userId, userId)))
+    .returning();
+
+  if (!updated) return null;
+
+  await recordBalanceChange({
+    userId,
+    walletId: id,
+    reason: "manual_adjustment",
+    changeAmount: amount,
+    balanceAfter: Number(updated.balance),
+  }).catch(() => undefined);
+
+  return updated;
 }
