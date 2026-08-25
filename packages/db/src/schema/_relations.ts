@@ -8,6 +8,7 @@ import { notification } from "./notification";
 import { invoice, invoiceItem } from "./invoice";
 import { goal } from "./goal";
 import { recurringRule } from "./recurring-rule";
+import { client } from "./client";
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -76,6 +77,10 @@ export const invoiceRelations = relations(invoice, ({ one, many }) => ({
     fields: [invoice.userId],
     references: [user.id],
   }),
+  client: one(client, {
+    fields: [invoice.clientId],
+    references: [client.id],
+  }),
   items: many(invoiceItem),
 }));
 
@@ -110,4 +115,12 @@ export const recurringRuleRelations = relations(recurringRule, ({ one }) => ({
     fields: [recurringRule.categoryId],
     references: [category.id],
   }),
+}));
+
+export const clientRelations = relations(client, ({ one, many }) => ({
+  user: one(user, {
+    fields: [client.userId],
+    references: [user.id],
+  }),
+  invoices: many(invoice),
 }));

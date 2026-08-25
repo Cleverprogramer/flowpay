@@ -8,6 +8,7 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
+import { client } from "./client";
 
 export const invoice = pgTable(
   "invoice",
@@ -18,6 +19,9 @@ export const invoice = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").references(() => client.id, {
+      onDelete: "set null",
+    }),
     invoiceNumber: text("invoice_number").notNull(),
     status: text("status", {
       enum: ["draft", "sent", "paid", "overdue", "cancelled"],
