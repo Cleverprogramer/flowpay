@@ -12,6 +12,7 @@ import { invoiceRoutes } from "./routes/invoice.routes";
 import { goalRoutes } from "./routes/goal.routes";
 import { recurringRuleRoutes } from "./routes/recurring-rule.routes";
 import { reportRoutes } from "./routes/report.routes";
+import { deviceRoutes } from "./routes/device.routes";
 
 const app = new Hono()
   .use(logger())
@@ -34,7 +35,8 @@ const app = new Hono()
   .route("/api/notification", notificationRoutes)
   .route("/api/goal", goalRoutes)
   .route("/api/recurring-rule", recurringRuleRoutes)
-  .route("/api/report", reportRoutes);
+  .route("/api/report", reportRoutes)
+  .route("/api/device", deviceRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);

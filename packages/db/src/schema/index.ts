@@ -7,4 +7,5 @@ export * from "./notification";
 export * from "./invoice";
 export * from "./goal";
 export * from "./recurring-rule";
+export * from "./device";
 export {};

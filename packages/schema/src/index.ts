@@ -7,3 +7,4 @@ export * from "./invoice.schema";
 export * from "./goal.schema";
 export * from "./recurring-rule.schema";
 export * from "./report.schema";
+export * from "./device.schema";

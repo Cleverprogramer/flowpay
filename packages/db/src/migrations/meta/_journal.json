@@ -43,6 +43,13 @@
       "when": 1787656766547,
       "tag": "0005_modern_mother_askani",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787656815077,
+      "tag": "0006_huge_talisman",
+      "breakpoints": true
     }
   ]
 }
