@@ -239,7 +239,10 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Templates | `GET /api/template`, `POST /api/template`, `POST /api/template/:id/apply`, `PUT /api/template/:id`, `DELETE /api/template/:id` |
 | Insights | `GET /api/insight/subscriptions`, `GET /api/insight/no-spend` |
 | Export | `GET /api/export` |
-| Reports (extra) | `GET /api/report/daily-activity?month=YYYY-MM`, `GET /api/report/top-descriptions` |
+| Reports (extra) | `GET /api/report/daily-activity?month=YYYY-MM`, `GET /api/report/top-descriptions`, `GET /api/report/weekday-spending`, `GET /api/report/year-in-review?year=2026` |
+| Insights (extra) | `GET /api/insight/savings-rate`, `GET /api/insight/month-over-month` |
+| Bulk (extra) | `POST /api/bulk/tag` |
+| Invoices (extra) | `POST /api/invoice/:id/clone` |
 | Categories (extra) | `GET /api/category/:id` |
 | Recurring (extra) | `POST /api/recurring-rule/:id/pause`, `POST /api/recurring-rule/:id/resume` |
 | Invoices (extra) | `GET /api/invoice/next-number`, `GET /api/budget/summary`, `GET /api/goal/summary` |
