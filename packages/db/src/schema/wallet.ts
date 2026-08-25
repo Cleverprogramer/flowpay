@@ -27,6 +27,7 @@ export const wallet = pgTable(
       .default("0"),
     currency: text("currency").notNull().default("USD"),
     isDefault: boolean("is_default").notNull().default(false),
+    archived: boolean("archived").notNull().default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

@@ -12,13 +12,15 @@ import {
 import {
   createWalletSchema,
   updateWalletSchema,
+  listWalletsQuerySchema,
 } from "@flowpay/schema/wallet.schema";
 
 export const walletRoutes = new Hono()
   .use(authMiddleware)
-  .get("/", async (c) => {
+  .get("/", zValidator("query", listWalletsQuerySchema), async (c) => {
     const userId = c.get("userId");
-    const data = await listWallets(userId);
+    const { archived } = c.req.valid("query");
+    const data = await listWallets(userId, { archived });
     return c.json({ data });
   })
   .get("/default", async (c) => {

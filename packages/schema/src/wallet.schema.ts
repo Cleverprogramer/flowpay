@@ -14,6 +14,14 @@ export const updateWalletSchema = z.object({
   icon: z.string().optional(),
   currency: z.string().min(1).max(10).optional(),
   isDefault: z.boolean().optional(),
+  archived: z.boolean().optional(),
+});
+
+export const listWalletsQuerySchema = z.object({
+  archived: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
 });
 
 export const walletSchema = z.object({
@@ -32,3 +40,4 @@ export const walletSchema = z.object({
 export type Wallet = z.infer<typeof walletSchema>;
 export type CreateWalletInput = z.infer<typeof createWalletSchema>;
 export type UpdateWalletInput = z.infer<typeof updateWalletSchema>;
+export type ListWalletsQuery = z.infer<typeof listWalletsQuerySchema>;

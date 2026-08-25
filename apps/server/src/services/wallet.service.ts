@@ -1,9 +1,18 @@
 import { db } from "@flowpay/db";
 import { wallet } from "@flowpay/db/schema/wallet";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
-export async function listWallets(userId: string) {
-  return db.select().from(wallet).where(eq(wallet.userId, userId));
+export async function listWallets(
+  userId: string,
+  options?: { archived?: boolean },
+) {
+  const conditions = [eq(wallet.userId, userId)];
+  conditions.push(eq(wallet.archived, options?.archived ?? false));
+  return db
+    .select()
+    .from(wallet)
+    .where(and(...conditions))
+    .orderBy(desc(wallet.createdAt));
 }
 
 export async function getWalletById(userId: string, id: string) {
@@ -63,6 +72,7 @@ export async function updateWallet(
     icon?: string;
     currency?: string;
     isDefault?: boolean;
+    archived?: boolean;
   },
 ) {
   if (data.isDefault) {
@@ -74,7 +84,7 @@ export async function updateWallet(
 
   const [result] = await db
     .update(wallet)
-    .set(data)
+    .set({ ...data, ...(data.archived ? { isDefault: false } : {}) })
     .where(and(eq(wallet.id, id), eq(wallet.userId, userId)))
     .returning();
 
