@@ -72,4 +72,17 @@ export const queryKeys = {
       ["expense-splits", "list", params] as const,
     summary: () => ["expense-splits", "summary"] as const,
   },
+  transfers: {
+    all: ["transfers"] as const,
+    list: (params?: Record<string, unknown>) =>
+      ["transfers", "list", params] as const,
+  },
+  tags: {
+    all: ["tags"] as const,
+    list: () => ["tags", "list"] as const,
+  },
+  templates: {
+    all: ["templates"] as const,
+    list: () => ["templates", "list"] as const,
+  },
 };
