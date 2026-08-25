@@ -18,7 +18,7 @@ export function useExpenseSplits(params?: {
             ? { transactionId: params.transactionId }
             : {}),
           ...(params?.isSettled !== undefined
-            ? { isSettled: String(params.isSettled) }
+            ? { isSettled: params.isSettled ? ("true" as const) : ("false" as const) }
             : {}),
         },
       });

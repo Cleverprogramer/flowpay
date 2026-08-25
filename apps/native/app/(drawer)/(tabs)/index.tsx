@@ -293,6 +293,34 @@ export default function Home() {
             </Pressable>
           </Link>
 
+          <Link href="/insights" asChild>
+            <Pressable
+              className="w-full rounded-[30px] bg-brand-flashwhite dark:bg-brand-green-800 p-4 border-0"
+              style={{ borderCurve: "continuous" }}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-x-3">
+                  <Text className="text-[20px]">💡</Text>
+                  <View>
+                    <Text
+                      className="text-[16px] text-brand-black dark:text-brand-white"
+                      style={{ fontFamily: "PlusJakartaSans_700Bold" }}
+                    >
+                      Insights
+                    </Text>
+                    <Text
+                      className="text-[12px] text-brand-grey dark:text-gray-400"
+                      style={{ fontFamily: "PlusJakartaSans_400Regular" }}
+                    >
+                      Savings rate, subscriptions & more
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={iconColor} />
+              </View>
+            </Pressable>
+          </Link>
+
           <FlowpayIncomeExpense
             incomeAmount={monthlyIncome}
             expenseAmount={monthlyExpense}
