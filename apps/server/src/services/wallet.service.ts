@@ -99,6 +99,25 @@ export async function deleteWallet(userId: string, id: string) {
     .delete(wallet)
     .where(and(eq(wallet.id, id), eq(wallet.userId, userId)))
     .returning();
+
+  if (result?.isDefault) {
+    const [successor] = await db
+      .select({ id: wallet.id })
+      .from(wallet)
+      .where(
+        and(eq(wallet.userId, userId), eq(wallet.archived, false)),
+      )
+      .orderBy(desc(wallet.createdAt))
+      .limit(1);
+
+    if (successor) {
+      await db
+        .update(wallet)
+        .set({ isDefault: true })
+        .where(eq(wallet.id, successor.id));
+    }
+  }
+
   return result ?? null;
 }
 
