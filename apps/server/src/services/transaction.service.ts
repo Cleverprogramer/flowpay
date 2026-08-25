@@ -6,6 +6,7 @@ import { eq, and, desc, sql, count, gte, lte } from "drizzle-orm";
 import { createNotification } from "./notification.service";
 import { checkBudgetAlerts } from "./budget-alert.service";
 import { recordBalanceChange } from "./balance-audit.service";
+import { suggestCategory } from "./categorization-rule.service";
 
 export async function listTransactions(
   userId: string,
@@ -128,12 +129,22 @@ export async function createTransaction(
     recurringInterval?: "daily" | "weekly" | "monthly" | "yearly";
   },
 ) {
+  // Fall back to the user's categorization rules when none supplied
+  let categoryId = data.categoryId;
+  if (!categoryId) {
+    const suggestion = await suggestCategory(
+      userId,
+      data.description,
+    ).catch(() => null);
+    categoryId = suggestion?.categoryId;
+  }
+
   const [result] = await db
     .insert(transaction)
     .values({
       userId,
       walletId: data.walletId,
-      categoryId: data.categoryId,
+      categoryId,
       type: data.type,
       amount: String(data.amount),
       description: data.description,

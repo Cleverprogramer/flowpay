@@ -17,6 +17,7 @@ import { deviceRoutes } from "./routes/device.routes";
 import { clientRoutes } from "./routes/client.routes";
 import { expenseSplitRoutes } from "./routes/expense-split.routes";
 import { balanceAuditRoutes } from "./routes/balance-audit.routes";
+import { categorizationRuleRoutes } from "./routes/categorization-rule.routes";
 
 const app = new Hono()
   .use(logger())
@@ -44,7 +45,8 @@ const app = new Hono()
   .route("/api/device", deviceRoutes)
   .route("/api/client", clientRoutes)
   .route("/api/expense-split", expenseSplitRoutes)
-  .route("/api/balance-audit", balanceAuditRoutes);
+  .route("/api/balance-audit", balanceAuditRoutes)
+  .route("/api/categorization-rule", categorizationRuleRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
