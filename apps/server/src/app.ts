@@ -15,6 +15,7 @@ import { recurringRuleRoutes } from "./routes/recurring-rule.routes";
 import { reportRoutes } from "./routes/report.routes";
 import { deviceRoutes } from "./routes/device.routes";
 import { clientRoutes } from "./routes/client.routes";
+import { expenseSplitRoutes } from "./routes/expense-split.routes";
 
 const app = new Hono()
   .use(logger())
@@ -40,7 +41,8 @@ const app = new Hono()
   .route("/api/recurring-rule", recurringRuleRoutes)
   .route("/api/report", reportRoutes)
   .route("/api/device", deviceRoutes)
-  .route("/api/client", clientRoutes);
+  .route("/api/client", clientRoutes)
+  .route("/api/expense-split", expenseSplitRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
