@@ -152,6 +152,8 @@ export async function createTransaction(
     categoryId = suggestion?.categoryId;
   }
 
+  const amount = Math.round(data.amount * 100) / 100;
+
   const [result] = await db
     .insert(transaction)
     .values({
@@ -159,7 +161,7 @@ export async function createTransaction(
       walletId: data.walletId,
       categoryId,
       type: data.type,
-      amount: String(data.amount),
+      amount: String(amount),
       description: data.description,
       note: data.note,
       transactionDate: new Date(data.transactionDate),
@@ -170,7 +172,7 @@ export async function createTransaction(
     .returning();
 
   // Update wallet balance atomically and journal the change
-  const balanceChange = data.type === "income" ? data.amount : -data.amount;
+  const balanceChange = data.type === "income" ? amount : -amount;
   const [updatedWallet] = await db
     .update(wallet)
     .set({
