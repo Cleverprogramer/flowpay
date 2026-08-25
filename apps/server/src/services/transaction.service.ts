@@ -303,12 +303,20 @@ export async function getTransactionSummary(
 
   const income = result.find((r) => r.type === "income");
   const expense = result.find((r) => r.type === "expense");
+  const incomeTotal = Number(income?.total ?? 0);
+  const expenseTotal = Number(expense?.total ?? 0);
 
   return {
-    income: Number(income?.total ?? 0),
-    expense: Number(expense?.total ?? 0),
-    balance: Number(income?.total ?? 0) - Number(expense?.total ?? 0),
+    income: incomeTotal,
+    expense: expenseTotal,
+    balance: incomeTotal - expenseTotal,
     transactionCount: (income?.count ?? 0) + (expense?.count ?? 0),
+    averageIncome:
+      income?.count ? Math.round((incomeTotal / income.count) * 100) / 100 : 0,
+    averageExpense:
+      expense?.count
+        ? Math.round((expenseTotal / expense.count) * 100) / 100
+        : 0,
   };
 }
 
