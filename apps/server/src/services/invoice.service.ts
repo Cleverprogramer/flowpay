@@ -152,6 +152,7 @@ export async function createInvoice(
     title: "Invoice Created",
     description: `Invoice ${data.invoiceNumber} for $${total.toLocaleString()} created.`,
     type: "info",
+    category: "invoice",
   }).catch(err => console.error("Failed to create notification:", err));
 
   return {
@@ -190,6 +191,7 @@ export async function updateInvoiceStatus(
     title: `Invoice ${capitalizedStatus}`,
     description: `Invoice ${result.invoiceNumber} is now ${status}.`,
     type: notifType,
+    category: "invoice",
   }).catch(err => console.error("Failed to create notification:", err));
 
   return {
