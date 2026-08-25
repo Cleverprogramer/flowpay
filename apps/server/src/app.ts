@@ -10,6 +10,7 @@ import { transactionRoutes } from "./routes/transaction.routes";
 import { notificationRoutes } from "./routes/notification.routes";
 import { invoiceRoutes } from "./routes/invoice.routes";
 import { goalRoutes } from "./routes/goal.routes";
+import { recurringRuleRoutes } from "./routes/recurring-rule.routes";
 
 const app = new Hono()
   .use(logger())
@@ -30,7 +31,8 @@ const app = new Hono()
   .route("/api/invoice", invoiceRoutes)
   .route("/api/transaction", transactionRoutes)
   .route("/api/notification", notificationRoutes)
-  .route("/api/goal", goalRoutes);
+  .route("/api/goal", goalRoutes)
+  .route("/api/recurring-rule", recurringRuleRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
