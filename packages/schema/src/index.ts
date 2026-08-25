@@ -19,3 +19,4 @@ export * from "./tag.schema";
 export * from "./invoice-payment.schema";
 export * from "./bulk.schema";
 export * from "./import.schema";
+export * from "./transaction-template.schema";
