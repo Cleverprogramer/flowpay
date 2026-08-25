@@ -9,11 +9,13 @@ export async function listInvoices(
     page: number;
     limit: number;
     status?: "draft" | "sent" | "paid" | "overdue" | "cancelled";
+    clientId?: string;
   },
 ) {
   const offset = (params.page - 1) * params.limit;
   const conditions: ReturnType<typeof eq>[] = [eq(invoice.userId, userId)];
   if (params.status) conditions.push(eq(invoice.status, params.status));
+  if (params.clientId) conditions.push(eq(invoice.clientId, params.clientId));
 
   const whereClause = and(...conditions);
 

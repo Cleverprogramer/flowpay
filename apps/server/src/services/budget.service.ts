@@ -4,7 +4,14 @@ import { category } from "@flowpay/db/schema/category";
 import { transaction } from "@flowpay/db/schema/transaction";
 import { eq, and, sql, gte, lte } from "drizzle-orm";
 
-export async function listBudgets(userId: string) {
+export async function listBudgets(
+  userId: string,
+  options?: { isActive?: boolean },
+) {
+  const conditions = [eq(budget.userId, userId)];
+  if (options?.isActive !== undefined)
+    conditions.push(eq(budget.isActive, options.isActive));
+
   const data = await db
     .select({
       id: budget.id,
@@ -24,7 +31,7 @@ export async function listBudgets(userId: string) {
     })
     .from(budget)
     .leftJoin(category, eq(budget.categoryId, category.id))
-    .where(eq(budget.userId, userId));
+    .where(and(...conditions));
 
   return data.map((row) => ({
     ...row,

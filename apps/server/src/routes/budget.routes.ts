@@ -11,15 +11,17 @@ import { checkBudgetAlerts } from "@/services/budget-alert.service";
 import {
   createBudgetSchema,
   updateBudgetSchema,
+  listBudgetsQuerySchema,
 } from "@flowpay/schema/budget.schema";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 export const budgetRoutes = new Hono()
   .use(authMiddleware)
-  .get("/", async (c) => {
+  .get("/", zValidator("query", listBudgetsQuerySchema), async (c) => {
     const userId = c.get("userId");
-    const data = await listBudgets(userId);
+    const { isActive } = c.req.valid("query");
+    const data = await listBudgets(userId, { isActive });
     return c.json({ data });
   })
   .get("/summary", async (c) => {

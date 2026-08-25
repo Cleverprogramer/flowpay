@@ -8,6 +8,15 @@ export const createBudgetSchema = z.object({
   endDate: z.iso.datetime().optional(),
 });
 
+export const listBudgetsQuerySchema = z.object({
+  isActive: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((value) =>
+      value === undefined ? undefined : value === "true",
+    ),
+});
+
 export const updateBudgetSchema = z.object({
   amount: z.number().positive().optional(),
   period: z.enum(["weekly", "monthly", "yearly"]).optional(),
