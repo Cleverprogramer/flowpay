@@ -31,6 +31,10 @@ export const listTransactionsSchema = z.object({
   categoryId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
+  minAmount: z.coerce.number().nonnegative().optional(),
+  maxAmount: z.coerce.number().nonnegative().optional(),
+  sortBy: z.enum(["date", "amount"]).default("date"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export const transactionSummarySchema = z.object({

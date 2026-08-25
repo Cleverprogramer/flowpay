@@ -2,7 +2,7 @@ import { db } from "@flowpay/db";
 import { category } from "@flowpay/db/schema/category";
 import { transaction } from "@flowpay/db/schema/transaction";
 import { wallet } from "@flowpay/db/schema/wallet";
-import { eq, and, desc, sql, count, gte, lte, ilike, or } from "drizzle-orm";
+import { eq, and, asc, desc, sql, count, gte, lte, ilike, or } from "drizzle-orm";
 import { createNotification } from "./notification.service";
 import { checkBudgetAlerts } from "./budget-alert.service";
 import { recordBalanceChange } from "./balance-audit.service";
@@ -19,6 +19,10 @@ export async function listTransactions(
     categoryId?: string;
     startDate?: string;
     endDate?: string;
+    minAmount?: number;
+    maxAmount?: number;
+    sortBy: "date" | "amount";
+    sortOrder: "asc" | "desc";
   },
 ) {
   const offset = (params.page - 1) * params.limit;
@@ -35,8 +39,14 @@ export async function listTransactions(
     );
   if (params.endDate)
     conditions.push(lte(transaction.transactionDate, new Date(params.endDate)));
+  if (params.minAmount !== undefined)
+    conditions.push(gte(transaction.amount, String(params.minAmount)));
+  if (params.maxAmount !== undefined)
+    conditions.push(lte(transaction.amount, String(params.maxAmount)));
 
   const whereClause = and(...conditions);
+  const sortColumn =
+    params.sortBy === "amount" ? transaction.amount : transaction.transactionDate;
 
   const [data, totalResult] = await Promise.all([
     db
@@ -64,7 +74,9 @@ export async function listTransactions(
       .leftJoin(category, eq(transaction.categoryId, category.id))
       .leftJoin(wallet, eq(transaction.walletId, wallet.id))
       .where(whereClause)
-      .orderBy(desc(transaction.transactionDate))
+      .orderBy(
+        params.sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn),
+      )
       .limit(params.limit)
       .offset(offset),
     db.select({ count: count() }).from(transaction).where(whereClause),
