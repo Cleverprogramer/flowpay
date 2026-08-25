@@ -4,10 +4,12 @@ import { authMiddleware } from "../middleware/auth";
 import {
   bulkDeleteTransactions,
   bulkCategorizeTransactions,
+  bulkAttachTag,
 } from "@/services/bulk.service";
 import {
   bulkDeleteSchema,
   bulkCategorizeSchema,
+  bulkTagSchema,
 } from "@flowpay/schema/bulk.schema";
 
 export const bulkRoutes = new Hono()
@@ -26,5 +28,11 @@ export const bulkRoutes = new Hono()
       body.transactionIds,
       body.categoryId,
     );
+    return c.json({ data });
+  })
+  .post("/tag", zValidator("json", bulkTagSchema), async (c) => {
+    const userId = c.get("userId");
+    const body = c.req.valid("json");
+    const data = await bulkAttachTag(userId, body.transactionIds, body.tagId);
     return c.json({ data });
   });

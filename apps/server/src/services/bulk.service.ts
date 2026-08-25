@@ -1,6 +1,7 @@
 import { db } from "@flowpay/db";
 import { transaction } from "@flowpay/db/schema/transaction";
 import { wallet } from "@flowpay/db/schema/wallet";
+import { transactionTag } from "@flowpay/db/schema/tag";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { recordBalanceChange } from "./balance-audit.service";
 
@@ -70,4 +71,25 @@ export async function bulkCategorizeTransactions(
     .returning({ id: transaction.id });
 
   return { updated: updated.length };
+}
+
+export async function bulkAttachTag(
+  userId: string,
+  transactionIds: string[],
+  tagId: string,
+) {
+  const owned = await loadOwned(userId, transactionIds);
+  if (!owned.length) return { attached: 0 };
+
+  const values = owned.map((item) => ({
+    transactionId: item.id,
+    tagId,
+  }));
+
+  await db
+    .insert(transactionTag)
+    .values(values)
+    .onConflictDoNothing();
+
+  return { attached: owned.length };
 }

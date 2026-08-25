@@ -9,5 +9,11 @@ export const bulkCategorizeSchema = z.object({
   categoryId: z.string().min(1),
 });
 
+export const bulkTagSchema = z.object({
+  transactionIds: z.array(z.string()).min(1).max(100),
+  tagId: z.string().min(1),
+});
+
 export type BulkDeleteInput = z.infer<typeof bulkDeleteSchema>;
 export type BulkCategorizeInput = z.infer<typeof bulkCategorizeSchema>;
+export type BulkTagInput = z.infer<typeof bulkTagSchema>;
