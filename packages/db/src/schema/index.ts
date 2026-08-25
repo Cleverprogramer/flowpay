@@ -16,4 +16,5 @@ export * from "./notification-preference";
 export * from "./currency-rate";
 export * from "./wallet-transfer";
 export * from "./tag";
+export * from "./invoice-payment";
 export {};
