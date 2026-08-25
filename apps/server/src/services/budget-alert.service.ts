@@ -75,6 +75,7 @@ export async function checkBudgetAlerts(userId: string) {
         item.categoryName ?? "a category"
       }: $${spent.toLocaleString()} of $${limit.toLocaleString()}`,
       type: level === "exceeded" ? "alert" : "info",
+      category: "budget",
     });
 
     await db

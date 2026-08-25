@@ -1,6 +1,10 @@
 import { db } from "@flowpay/db";
 import { notification } from "@flowpay/db/schema/notification";
 import { eq, and, desc, count } from "drizzle-orm";
+import {
+  isCategoryEnabled,
+  type NotificationCategory,
+} from "./notification-preference.service";
 
 export async function listNotifications(
   userId: string,
@@ -40,8 +44,16 @@ export async function createNotification(
     title: string;
     description: string;
     type?: "success" | "alert" | "info";
+    category?: NotificationCategory;
   },
 ) {
+  if (data.category) {
+    const enabled = await isCategoryEnabled(userId, data.category).catch(
+      () => true,
+    );
+    if (!enabled) return null;
+  }
+
   const [result] = await db
     .insert(notification)
     .values({

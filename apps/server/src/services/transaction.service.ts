@@ -184,6 +184,7 @@ export async function createTransaction(
     title: `New ${capitalizedType} Added`,
     description: `You added $${data.amount.toLocaleString()} for "${data.description}"`,
     type: data.type === "income" ? "success" : "alert",
+    category: "transaction",
   }).catch((err) => console.error("Failed to create notification:", err));
 
   // Evaluate budget alerts after every expense so warnings stay current
