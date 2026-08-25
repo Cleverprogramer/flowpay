@@ -4,6 +4,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
+import { etag } from "hono/etag";
+import { compress } from "hono/compress";
 import { createRateLimiter } from "./middleware/rate-limit";
 import { requestIdMiddleware } from "./middleware/request-id";
 import { bodySizeLimit } from "./middleware/body-limit";
@@ -42,6 +44,8 @@ import { exportRoutes } from "./routes/export.routes";
 const app = new Hono()
   .use(logger())
   .use(secureHeaders())
+  .use(compress())
+  .use(etag())
   .use(requestIdMiddleware)
   .use(bodySizeLimit)
   .use(
