@@ -14,7 +14,7 @@ import {
   deleteInvoice,
   generateInvoiceHtml,
 } from "../services/invoice.service";
-import { getNextInvoiceNumber } from "@/services/invoice.service";
+import { getNextInvoiceNumber, cloneInvoice } from "@/services/invoice.service";
 import { processInvoiceReminders } from "@/services/invoice-reminder.service";
 
 export const invoiceRoutes = new Hono()
@@ -34,6 +34,13 @@ export const invoiceRoutes = new Hono()
     const userId = c.get("userId");
     const data = await getNextInvoiceNumber(userId);
     return c.json({ data });
+  })
+  .post("/:id/clone", async (c) => {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+    const data = await cloneInvoice(userId, id);
+    if (!data) return c.json({ error: "Invoice not found or has no items" }, 404);
+    return c.json({ data }, 201);
   })
   .get("/:id", async (c) => {
     const userId = c.get("userId");

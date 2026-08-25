@@ -365,3 +365,30 @@ export async function getNextInvoiceNumber(userId: string) {
 
   return { invoiceNumber: candidate };
 }
+
+export async function cloneInvoice(userId: string, id: string) {
+  const source = await getInvoiceById(userId, id);
+  if (!source) return null;
+
+  const items = source.items.map((item) => ({
+    description: item.description,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+  }));
+
+  if (!items.length) return null;
+
+  const next = await getNextInvoiceNumber(userId);
+
+  return createInvoice(userId, {
+    invoiceNumber: next.invoiceNumber,
+    clientId: source.clientId ?? undefined,
+    clientName: source.clientName,
+    clientEmail: source.clientEmail ?? undefined,
+    currency: source.currency,
+    issueDate: new Date().toISOString(),
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    taxRate: Number(source.taxRate),
+    items,
+  });
+}
