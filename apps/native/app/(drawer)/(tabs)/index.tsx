@@ -23,6 +23,7 @@ import { useWallets } from "@/hooks/use-wallet";
 import { useTransactionSummary } from "@/hooks/use-transactions";
 import { useInvoices } from "@/hooks/use-invoice";
 import { useGoals } from "@/hooks/use-goals";
+import { useRecurringRules } from "@/hooks/use-recurring-rules";
 import FlowpayInvoiceCard from "@/components/containers/flowpay-invoice-card";
 import { format } from "date-fns";
 import { InvoiceStatus } from "@/types/invoice";
@@ -144,6 +145,14 @@ export default function Home() {
       ? Math.min(100, Math.round((totalSaved / totalTarget) * 100))
       : 0;
 
+  const { data: rulesResponse } = useRecurringRules();
+  const recurringRules = ((rulesResponse as any)?.data ?? []) as Array<{
+    isActive: boolean;
+    type: string;
+    monthlyEquivalent?: number;
+  }>;
+  const activeRuleCount = recurringRules.filter((rule) => rule.isActive).length;
+
   return (
     <Container className="p-4 md:p-6" isScrollable={false}>
       <ScrollView
@@ -252,6 +261,35 @@ export default function Home() {
                 ${totalSaved.toLocaleString()} saved · {goalsPercentage}% of $
                 {totalTarget.toLocaleString()}
               </Text>
+            </Pressable>
+          </Link>
+
+          <Link href="/recurring" asChild>
+            <Pressable
+              className="w-full rounded-[30px] bg-brand-flashwhite dark:bg-brand-green-800 p-4 border-0"
+              style={{ borderCurve: "continuous" }}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-x-3">
+                  <Text className="text-[20px]">🔁</Text>
+                  <View>
+                    <Text
+                      className="text-[16px] text-brand-black dark:text-brand-white"
+                      style={{ fontFamily: "PlusJakartaSans_700Bold" }}
+                    >
+                      Recurring
+                    </Text>
+                    <Text
+                      className="text-[12px] text-brand-grey dark:text-gray-400"
+                      style={{ fontFamily: "PlusJakartaSans_400Regular" }}
+                    >
+                      {activeRuleCount} active rule
+                      {activeRuleCount === 1 ? "" : "s"}
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={iconColor} />
+              </View>
             </Pressable>
           </Link>
 
