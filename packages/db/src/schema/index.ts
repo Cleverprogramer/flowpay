@@ -11,4 +11,5 @@ export * from "./device";
 export * from "./client";
 export * from "./expense-split";
 export * from "./balance-audit";
+export * from "./categorization-rule";
 export {};
