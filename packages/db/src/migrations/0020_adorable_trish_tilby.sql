@@ -1,0 +1,1 @@
+CREATE INDEX "invoice_dueDate_idx" ON "invoice" USING btree ("due_date");

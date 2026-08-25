@@ -141,6 +141,13 @@
       "when": 1787659969092,
       "tag": "0019_last_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1787661127829,
+      "tag": "0020_adorable_trish_tilby",
+      "breakpoints": true
     }
   ]
 }

@@ -53,6 +53,7 @@ export const invoice = pgTable(
   (table) => [
     index("invoice_userId_idx").on(table.userId),
     index("invoice_status_idx").on(table.status),
+    index("invoice_dueDate_idx").on(table.dueDate),
     unique("invoice_number_user_unique").on(table.userId, table.invoiceNumber),
     unique("invoice_shareToken_unique").on(table.shareToken),
   ],
