@@ -6,7 +6,7 @@ export function useWallets() {
   return useQuery({
     queryKey: queryKeys.wallets.list(),
     queryFn: async () => {
-      const res = await api.api.wallet.$get();
+      const res = await api.api.wallet.$get({ query: {} });
       if (!res.ok) throw new Error("Failed to fetch wallets");
       return res.json();
     },

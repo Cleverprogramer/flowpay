@@ -23,7 +23,7 @@ export function useMonthlyTrends(months: number = 6) {
     queryKey: queryKeys.reports.monthlyTrends({ months }),
     queryFn: async () => {
       const res = await api.api.report["monthly-trends"].$get({
-        query: { months },
+        query: { months: String(months) },
       });
       if (!res.ok) throw new Error("Failed to fetch monthly trends");
       return res.json();
