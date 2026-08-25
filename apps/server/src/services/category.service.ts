@@ -77,3 +77,13 @@ export async function deleteCategory(userId: string, id: string) {
     .returning();
   return result ?? null;
 }
+
+export async function getCategoryById(userId: string, id: string) {
+  const [result] = await db
+    .select()
+    .from(category)
+    .where(
+      and(eq(category.id, id), or(eq(category.userId, userId), isNull(category.userId))),
+    );
+  return result ?? null;
+}

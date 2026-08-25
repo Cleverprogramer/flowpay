@@ -1,5 +1,5 @@
 import { authMiddleware } from "@/middleware/auth";
-import { createCategory, deleteCategory, listCategories, updateCategory } from "@/services/category.service";
+import { createCategory, deleteCategory, listCategories, updateCategory, getCategoryById } from "@/services/category.service";
 import { createCategorySchema, listCategorySchema, updateCategorySchema } from "@flowpay/schema/category.schema";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
@@ -11,6 +11,13 @@ export const categoryRoutes = new Hono()
     const { type } = c.req.valid('query');
     const data = await listCategories(userId, type);
     return c.json(data);
+})
+.get("/:id", async (c) => {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+    const data = await getCategoryById(userId, id);
+    if (!data) return c.json({ error: "Category not found" }, 404);
+    return c.json({ data });
 })
 .post("/", zValidator("json", createCategorySchema), async (c) => {
     const userId = c.get("userId");
