@@ -226,6 +226,17 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Dashboard | `GET /api/dashboard` |
 | Currency Rates | `GET /api/currency-rate`, `GET /api/currency-rate/convert`, `PUT /api/currency-rate`, `DELETE /api/currency-rate/:id` |
 | Health | `GET /api/health` |
+| Transfers | `GET /api/transfer`, `POST /api/transfer` |
+| Tags | `GET /api/tag`, `GET /api/tag/:id/transactions`, `POST /api/tag`, `POST /api/tag/attach`, `DELETE /api/tag/:id`, `DELETE /api/tag/:id/transactions/:transactionId` |
+| Invoice Payments | `GET /api/invoice-payment/invoice/:invoiceId`, `POST /api/invoice-payment/invoice/:invoiceId` |
+| Invoice Sharing | `POST /api/invoice/:id/share`, `DELETE /api/invoice/:id/share`, `GET /api/public/invoice/:token` (public) |
+| Forecasts | `GET /api/forecast/net-worth`, `GET /api/forecast/cash-flow` |
+| Duplicates | `GET /api/transaction/duplicates` |
+| Bulk Ops | `POST /api/bulk/delete`, `POST /api/bulk/categorize` |
+| Import | `POST /api/import/preview`, `POST /api/import/commit` |
+| Templates | `GET /api/template`, `POST /api/template`, `POST /api/template/:id/apply`, `PUT /api/template/:id`, `DELETE /api/template/:id` |
+| Insights | `GET /api/insight/subscriptions`, `GET /api/insight/no-spend` |
+| Export | `GET /api/export` |
 | Invoices | `GET /api/invoice`, `GET /api/invoice/:id`, `GET /api/invoice/:id/html`, `POST /api/invoice/process-reminders`, `POST /api/invoice`, `PATCH /api/invoice/:id/status`, `DELETE /api/invoice/:id` |
 | Notifications | `GET /api/notification`, `POST /api/notification`, `PATCH /api/notification/mark-all-read`, `PATCH /api/notification/:id/read` |
 
