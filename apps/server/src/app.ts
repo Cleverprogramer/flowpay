@@ -24,6 +24,7 @@ import { notificationPreferenceRoutes } from "./routes/notification-preference.r
 import { dashboardRoutes } from "./routes/dashboard.routes";
 import { currencyRateRoutes } from "./routes/currency-rate.routes";
 import { walletTransferRoutes } from "./routes/wallet-transfer.routes";
+import { tagRoutes } from "./routes/tag.routes";
 
 const app = new Hono()
   .use(logger())
@@ -58,7 +59,8 @@ const app = new Hono()
   .route("/api/notification-preference", notificationPreferenceRoutes)
   .route("/api/dashboard", dashboardRoutes)
   .route("/api/currency-rate", currencyRateRoutes)
-  .route("/api/transfer", walletTransferRoutes);
+  .route("/api/transfer", walletTransferRoutes)
+  .route("/api/tag", tagRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
