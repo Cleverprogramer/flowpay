@@ -4,6 +4,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createRateLimiter } from "./middleware/rate-limit";
+import { requestIdMiddleware } from "./middleware/request-id";
+import { healthRoutes } from "./routes/health.routes";
 import { categoryRoutes } from "./routes/category.routes";
 import { walletRoutes } from "./routes/wallet.routes";
 import { budgetRoutes } from "./routes/budget.routes";
@@ -24,6 +26,7 @@ import { currencyRateRoutes } from "./routes/currency-rate.routes";
 
 const app = new Hono()
   .use(logger())
+  .use(requestIdMiddleware)
   .use(
     "/*",
     cors({
@@ -34,6 +37,7 @@ const app = new Hono()
     }),
   )
   .on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+  .route("/api/health", healthRoutes)
   .use("/api/*", createRateLimiter({ windowMs: 60_000, max: 120 }))
 
   .route("/api/category", categoryRoutes)
