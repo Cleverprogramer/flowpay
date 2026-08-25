@@ -1,5 +1,6 @@
 import { db } from "@flowpay/db";
 import { wallet } from "@flowpay/db/schema/wallet";
+import { transaction } from "@flowpay/db/schema/transaction";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { recordBalanceChange } from "./balance-audit.service";
 
@@ -122,4 +123,40 @@ export async function adjustWalletBalance(
   }).catch(() => undefined);
 
   return updated;
+}
+
+export async function recalculateWalletBalances(userId: string) {
+  const wallets = await db
+    .select({ id: wallet.id })
+    .from(wallet)
+    .where(eq(wallet.userId, userId));
+
+  let corrected = 0;
+
+  for (const item of wallets) {
+    const [totals] = await db
+      .select({
+        net: sql<string>`COALESCE(SUM(CASE WHEN ${transaction.type} = 'income' THEN ${transaction.amount} ELSE -${transaction.amount} END), 0)`,
+      })
+      .from(transaction)
+      .where(
+        and(eq(transaction.walletId, item.id), eq(transaction.userId, userId)),
+      );
+
+    const ledgerBalance = Number(totals?.net ?? 0);
+    const [current] = await db
+      .select({ balance: wallet.balance })
+      .from(wallet)
+      .where(eq(wallet.id, item.id));
+
+    if (current && Math.abs(Number(current.balance) - ledgerBalance) >= 0.01) {
+      await db
+        .update(wallet)
+        .set({ balance: String(ledgerBalance) })
+        .where(eq(wallet.id, item.id));
+      corrected++;
+    }
+  }
+
+  return { checked: wallets.length, corrected };
 }

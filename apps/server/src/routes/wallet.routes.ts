@@ -9,6 +9,7 @@ import {
   updateWallet,
   deleteWallet,
   adjustWalletBalance,
+  recalculateWalletBalances,
 } from "@/services/wallet.service";
 import { getWalletLimitStatus } from "@/services/wallet-limit.service";
 import {
@@ -49,6 +50,11 @@ export const walletRoutes = new Hono()
     const id = c.req.param("id");
     const data = await getWalletLimitStatus(userId, id);
     if (!data) return c.json({ error: "Wallet not found" }, 404);
+    return c.json({ data });
+  })
+  .post("/recalculate-balances", async (c) => {
+    const userId = c.get("userId");
+    const data = await recalculateWalletBalances(userId);
     return c.json({ data });
   })
   .patch(
