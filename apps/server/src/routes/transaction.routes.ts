@@ -9,6 +9,7 @@ import {
   exportTransactions,
   searchTransactions,
 } from "@/services/transaction.service";
+import { listPotentialDuplicates } from "@/services/duplicate.service";
 import {
   createTransactionSchema,
   listTransactionsSchema,
@@ -65,6 +66,11 @@ export const transactionRoutes = new Hono()
       return c.json(result);
     },
   )
+  .get("/duplicates", async (c) => {
+    const userId = c.get("userId");
+    const data = await listPotentialDuplicates(userId);
+    return c.json({ data });
+  })
   .get("/:id", async (c) => {
     const userId = c.get("userId");
     const id = c.req.param("id");
