@@ -35,6 +35,7 @@ import { bulkRoutes } from "./routes/bulk.routes";
 import { importRoutes } from "./routes/import.routes";
 import { templateRoutes } from "./routes/transaction-template.routes";
 import { insightRoutes } from "./routes/insight.routes";
+import { exportRoutes } from "./routes/export.routes";
 
 const app = new Hono()
   .use(logger())
@@ -78,7 +79,8 @@ const app = new Hono()
   .route("/api/bulk", bulkRoutes)
   .route("/api/import", importRoutes)
   .route("/api/template", templateRoutes)
-  .route("/api/insight", insightRoutes);
+  .route("/api/insight", insightRoutes)
+  .route("/api/export", exportRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
