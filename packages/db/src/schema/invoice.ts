@@ -40,6 +40,8 @@ export const invoice = pgTable(
     issueDate: timestamp("issue_date").notNull(),
     dueDate: timestamp("due_date").notNull(),
     paidDate: timestamp("paid_date"),
+    lastReminderAt: timestamp("last_reminder_at"),
+    reminderCount: integer("reminder_count").notNull().default(0),
     note: text("note"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
