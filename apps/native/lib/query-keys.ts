@@ -38,4 +38,22 @@ export const queryKeys = {
       ["invoices", "list", params] as const,
     detail: (id: string) => ["invoices", "detail", id] as const,
   },
+  goals: {
+    all: ["goals"] as const,
+    list: () => ["goals", "list"] as const,
+    detail: (id: string) => ["goals", "detail", id] as const,
+  },
+  recurringRules: {
+    all: ["recurring-rules"] as const,
+    list: () => ["recurring-rules", "list"] as const,
+    detail: (id: string) => ["recurring-rules", "detail", id] as const,
+  },
+  reports: {
+    all: ["reports"] as const,
+    spendingByCategory: (params?: Record<string, unknown>) =>
+      ["reports", "spending-by-category", params] as const,
+    monthlyTrends: (params?: Record<string, unknown>) =>
+      ["reports", "monthly-trends", params] as const,
+    walletBreakdown: () => ["reports", "wallet-breakdown"] as const,
+  },
 };
