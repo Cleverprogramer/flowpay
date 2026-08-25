@@ -32,6 +32,7 @@ import {
 } from "./routes/invoice-share.routes";
 import { forecastRoutes } from "./routes/forecast.routes";
 import { bulkRoutes } from "./routes/bulk.routes";
+import { importRoutes } from "./routes/import.routes";
 
 const app = new Hono()
   .use(logger())
@@ -72,7 +73,8 @@ const app = new Hono()
   .route("/api/invoice", invoiceShareRoutes)
   .route("/api/public", publicInvoiceRoutes)
   .route("/api/forecast", forecastRoutes)
-  .route("/api/bulk", bulkRoutes);
+  .route("/api/bulk", bulkRoutes)
+  .route("/api/import", importRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);

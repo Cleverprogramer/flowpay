@@ -18,3 +18,4 @@ export * from "./wallet-transfer.schema";
 export * from "./tag.schema";
 export * from "./invoice-payment.schema";
 export * from "./bulk.schema";
+export * from "./import.schema";
