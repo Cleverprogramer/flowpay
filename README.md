@@ -47,7 +47,12 @@ The app is designed around everyday financial clarity: users can manage wallets,
 
 - Bun runtime with Hono route modules and service-based business logic.
 - Better Auth integration with shared auth/database packages.
-- Wallet, category, transaction, budget, invoice, and notification API domains.
+- Wallet, category, transaction, budget, goal, recurring rule, report, device, invoice, and notification API domains.
+- Savings goals with atomic contribution tracking and auto-completion.
+- Recurring transaction engine with missed-occurrence catch-up processing.
+- Budget overspend alerts raised exactly once per threshold (80% warning, 100% exceeded).
+- CSV statement export and analytics endpoints for category, trend, and wallet reporting.
+- In-memory fixed-window rate limiting on all `/api` routes.
 - Zod request validation through shared schemas and Hono validators.
 - Drizzle-backed PostgreSQL persistence with migrations, relations, and typed schema exports.
 - Thin route handlers with domain behavior organized in service modules.
@@ -176,6 +181,7 @@ EXPO_PUBLIC_SERVER_URL=http://localhost:3000
 | `bun run db:generate` | Generate Drizzle migrations. |
 | `bun run db:migrate` | Apply Drizzle migrations. |
 | `bun run db:studio` | Open Drizzle Studio. |
+| `bun run test:server` | Run server unit tests with the built-in bun test runner. |
 
 ### Native App
 
@@ -204,12 +210,18 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Area | Endpoints |
 | --- | --- |
 | Auth | `/api/auth/*` |
-| Wallets | `GET /api/wallet`, `GET /api/wallet/default`, `GET /api/wallet/:id`, `POST /api/wallet`, `PUT /api/wallet/:id`, `DELETE /api/wallet/:id` |
+| Wallets | `GET /api/wallet`, `GET /api/wallet/default`, `GET /api/wallet/:id`, `POST /api/wallet`, `PUT /api/wallet/:id`, `DELETE /api/wallet/:id` (supports `?archived=true`) |
 | Categories | `GET /api/category`, `POST /api/category`, `PUT /api/category/:id`, `DELETE /api/category/:id` |
-| Transactions | `GET /api/transaction`, `GET /api/transaction/summary`, `GET /api/transaction/:id`, `POST /api/transaction`, `PUT /api/transaction/:id`, `DELETE /api/transaction/:id` |
-| Budgets | `GET /api/budget`, `GET /api/budget/:id`, `POST /api/budget`, `PUT /api/budget/:id`, `DELETE /api/budget/:id` |
+| Transactions | `GET /api/transaction`, `GET /api/transaction/summary`, `GET /api/transaction/export`, `GET /api/transaction/:id`, `POST /api/transaction`, `PUT /api/transaction/:id`, `DELETE /api/transaction/:id` |
+| Budgets | `GET /api/budget`, `GET /api/budget/:id`, `POST /api/budget/check-alerts`, `POST /api/budget`, `PUT /api/budget/:id`, `DELETE /api/budget/:id` |
+| Goals | `GET /api/goal`, `GET /api/goal/:id`, `POST /api/goal`, `PATCH /api/goal/:id/contribute`, `PUT /api/goal/:id`, `DELETE /api/goal/:id` |
+| Recurring Rules | `GET /api/recurring-rule`, `POST /api/recurring-rule/process-due`, `GET /api/recurring-rule/:id`, `POST /api/recurring-rule`, `PUT /api/recurring-rule/:id`, `DELETE /api/recurring-rule/:id` |
+| Reports | `GET /api/report/spending-by-category`, `GET /api/report/monthly-trends?months=6`, `GET /api/report/wallet-breakdown` |
+| Devices | `GET /api/device`, `POST /api/device`, `DELETE /api/device/:token` |
 | Invoices | `GET /api/invoice`, `GET /api/invoice/:id`, `GET /api/invoice/:id/html`, `POST /api/invoice`, `PATCH /api/invoice/:id/status`, `DELETE /api/invoice/:id` |
 | Notifications | `GET /api/notification`, `POST /api/notification`, `PATCH /api/notification/mark-all-read`, `PATCH /api/notification/:id/read` |
+
+All finance routes are rate-limited with standard `X-RateLimit-*` response headers.
 
 ## Data Model
 
@@ -223,15 +235,18 @@ erDiagram
     USER ||--o{ CATEGORY : owns
     USER ||--o{ TRANSACTION : records
     USER ||--o{ BUDGET : tracks
+    USER ||--o{ GOAL : saves-toward
+    USER ||--o{ RECURRING_RULE : automates
     USER ||--o{ INVOICE : sends
     USER ||--o{ NOTIFICATION : receives
+    USER ||--o{ DEVICE : registers
     WALLET ||--o{ TRANSACTION : contains
     CATEGORY ||--o{ TRANSACTION : classifies
     CATEGORY ||--o{ BUDGET : limits
     INVOICE ||--o{ INVOICE_ITEM : includes
 ```
 
-Core tables include auth users, sessions, accounts, wallets, categories, transactions, budgets, invoices, invoice items, and notifications.
+Core tables include auth users, sessions, accounts, wallets, categories, transactions, budgets, goals, recurring rules, invoices, invoice items, devices, and notifications.
 
 ## Development Flow
 
