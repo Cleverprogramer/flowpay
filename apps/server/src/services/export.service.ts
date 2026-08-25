@@ -7,6 +7,9 @@ import { goal } from "@flowpay/db/schema/goal";
 import { recurringRule } from "@flowpay/db/schema/recurring-rule";
 import { invoice, invoiceItem } from "@flowpay/db/schema/invoice";
 import { notification } from "@flowpay/db/schema/notification";
+import { expenseSplit } from "@flowpay/db/schema/expense-split";
+import { device } from "@flowpay/db/schema/device";
+import { notificationPreference } from "@flowpay/db/schema/notification-preference";
 import { eq } from "drizzle-orm";
 
 export async function exportUserData(userId: string) {
@@ -20,6 +23,9 @@ export async function exportUserData(userId: string) {
     invoices,
     invoiceItems,
     notifications,
+    expenseSplits,
+    devices,
+    preferences,
   ] = await Promise.all([
     db.select().from(wallet).where(eq(wallet.userId, userId)),
     db.select().from(category).where(eq(category.userId, userId)),
@@ -40,11 +46,17 @@ export async function exportUserData(userId: string) {
       .select()
       .from(notification)
       .where(eq(notification.userId, userId)),
+    db.select().from(expenseSplit).where(eq(expenseSplit.userId, userId)),
+    db.select().from(device).where(eq(device.userId, userId)),
+    db
+      .select()
+      .from(notificationPreference)
+      .where(eq(notificationPreference.userId, userId)),
   ]);
 
   return {
     exportedAt: new Date().toISOString(),
-    version: 1,
+    version: 2,
     data: {
       wallets,
       categories,
@@ -55,6 +67,9 @@ export async function exportUserData(userId: string) {
       invoices,
       invoiceItems: invoiceItems.map((row) => row.item),
       notifications,
+      expenseSplits,
+      devices,
+      notificationPreferences: preferences,
     },
   };
 }
