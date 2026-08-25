@@ -1,0 +1,1 @@
+ALTER TABLE "wallet" ADD COLUMN "monthly_limit" numeric(12, 2);

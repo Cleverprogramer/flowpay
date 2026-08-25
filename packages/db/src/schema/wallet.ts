@@ -28,6 +28,7 @@ export const wallet = pgTable(
     currency: text("currency").notNull().default("USD"),
     isDefault: boolean("is_default").notNull().default(false),
     archived: boolean("archived").notNull().default(false),
+    monthlyLimit: numeric("monthly_limit", { precision: 12, scale: 2 }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

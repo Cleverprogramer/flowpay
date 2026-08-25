@@ -127,6 +127,13 @@
       "when": 1787659529167,
       "tag": "0017_magical_spirit",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1787659618192,
+      "tag": "0018_third_power_man",
+      "breakpoints": true
     }
   ]
 }
