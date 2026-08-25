@@ -30,6 +30,7 @@ import {
   invoiceShareRoutes,
   publicInvoiceRoutes,
 } from "./routes/invoice-share.routes";
+import { forecastRoutes } from "./routes/forecast.routes";
 
 const app = new Hono()
   .use(logger())
@@ -68,7 +69,8 @@ const app = new Hono()
   .route("/api/tag", tagRoutes)
   .route("/api/invoice-payment", invoicePaymentRoutes)
   .route("/api/invoice", invoiceShareRoutes)
-  .route("/api/public", publicInvoiceRoutes);
+  .route("/api/public", publicInvoiceRoutes)
+  .route("/api/forecast", forecastRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
