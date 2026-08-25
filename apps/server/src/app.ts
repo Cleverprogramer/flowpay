@@ -48,6 +48,11 @@ const app = new Hono()
       origin: env.CORS_ORIGIN,
       allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization", "Cookie"],
+      exposeHeaders: [
+        "X-Request-Id",
+        "X-RateLimit-Limit",
+        "X-RateLimit-Remaining",
+      ],
       credentials: true,
     }),
   )
