@@ -17,4 +17,5 @@ export * from "./currency-rate";
 export * from "./wallet-transfer";
 export * from "./tag";
 export * from "./invoice-payment";
+export * from "./transaction-template";
 export {};
