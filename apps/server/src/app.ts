@@ -23,6 +23,7 @@ import { categorizationRuleRoutes } from "./routes/categorization-rule.routes";
 import { notificationPreferenceRoutes } from "./routes/notification-preference.routes";
 import { dashboardRoutes } from "./routes/dashboard.routes";
 import { currencyRateRoutes } from "./routes/currency-rate.routes";
+import { walletTransferRoutes } from "./routes/wallet-transfer.routes";
 
 const app = new Hono()
   .use(logger())
@@ -56,7 +57,8 @@ const app = new Hono()
   .route("/api/categorization-rule", categorizationRuleRoutes)
   .route("/api/notification-preference", notificationPreferenceRoutes)
   .route("/api/dashboard", dashboardRoutes)
-  .route("/api/currency-rate", currencyRateRoutes);
+  .route("/api/currency-rate", currencyRateRoutes)
+  .route("/api/transfer", walletTransferRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);

@@ -14,3 +14,4 @@ export * from "./balance-audit.schema";
 export * from "./categorization-rule.schema";
 export * from "./notification-preference.schema";
 export * from "./currency-rate.schema";
+export * from "./wallet-transfer.schema";
