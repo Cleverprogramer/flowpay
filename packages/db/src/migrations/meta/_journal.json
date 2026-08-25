@@ -120,6 +120,13 @@
       "when": 1787659466264,
       "tag": "0016_stiff_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1787659529167,
+      "tag": "0017_magical_spirit",
+      "breakpoints": true
     }
   ]
 }

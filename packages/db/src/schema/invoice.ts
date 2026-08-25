@@ -42,6 +42,7 @@ export const invoice = pgTable(
     paidDate: timestamp("paid_date"),
     lastReminderAt: timestamp("last_reminder_at"),
     reminderCount: integer("reminder_count").notNull().default(0),
+    shareToken: text("share_token"),
     note: text("note"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
@@ -53,6 +54,7 @@ export const invoice = pgTable(
     index("invoice_userId_idx").on(table.userId),
     index("invoice_status_idx").on(table.status),
     unique("invoice_number_user_unique").on(table.userId, table.invoiceNumber),
+    unique("invoice_shareToken_unique").on(table.shareToken),
   ],
 );
 
