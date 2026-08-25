@@ -222,6 +222,7 @@ export async function updateTransaction(
     description?: string;
     note?: string;
     transactionDate?: string;
+    receiptUrl?: string | null;
   },
 ) {
   const updateData: Record<string, unknown> = {};
@@ -231,6 +232,7 @@ export async function updateTransaction(
   if (data.note !== undefined) updateData.note = data.note;
   if (data.transactionDate !== undefined)
     updateData.transactionDate = new Date(data.transactionDate);
+  if (data.receiptUrl !== undefined) updateData.receiptUrl = data.receiptUrl;
 
   const [result] = await db
     .update(transaction)

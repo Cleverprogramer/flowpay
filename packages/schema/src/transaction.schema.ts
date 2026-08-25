@@ -21,6 +21,7 @@ export const updateTransactionSchema = z.object({
   description: z.string().min(1).max(255).optional(),
   note: z.string().optional(),
   transactionDate: z.iso.datetime().optional(),
+  receiptUrl: z.url().nullable().optional(),
 });
 
 export const listTransactionsSchema = z.object({
