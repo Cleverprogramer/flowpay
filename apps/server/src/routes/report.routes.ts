@@ -6,6 +6,7 @@ import {
   getMonthlyTrends,
   getWalletBreakdown,
   getDailyActivity,
+  getTopDescriptions,
 } from "@/services/report.service";
 import {
   reportRangeSchema,
@@ -53,4 +54,9 @@ export const reportRoutes = new Hono()
         return c.json({ error: "Invalid month format" }, 400);
       }
     },
-  );
+  )
+  .get("/top-descriptions", async (c) => {
+    const userId = c.get("userId");
+    const data = await getTopDescriptions(userId);
+    return c.json({ data });
+  });

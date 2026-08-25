@@ -150,3 +150,28 @@ export async function getDailyActivity(userId: string, month: string) {
     net: Number(row.income) - Number(row.expense),
   }));
 }
+
+export async function getTopDescriptions(userId: string, limit = 10) {
+  const rows = await db
+    .select({
+      description: sql<string>`LOWER(TRIM(${transaction.description}))`,
+      total: sql<string>`COALESCE(SUM(${transaction.amount}), 0)`,
+      count: sql<number>`COUNT(*)::int`,
+    })
+    .from(transaction)
+    .where(
+      and(
+        eq(transaction.userId, userId),
+        eq(transaction.type, "expense"),
+      ),
+    )
+    .groupBy(sql`LOWER(TRIM(${transaction.description}))`)
+    .orderBy(desc(sql`SUM(${transaction.amount})`))
+    .limit(limit);
+
+  return rows.map((row) => ({
+    description: row.description,
+    total: Number(row.total),
+    count: row.count,
+  }));
+}
