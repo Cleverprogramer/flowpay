@@ -165,6 +165,14 @@ export async function updateBudget(
     ...result,
     amount: Number(result.amount),
     spent: Number(result.spent),
+    remaining: Number(result.amount) - Number(result.spent),
+    percentage:
+      Number(result.amount) > 0
+        ? Math.min(
+            100,
+            Math.round((Number(result.spent) / Number(result.amount)) * 100),
+          )
+        : 0,
   };
 }
 
