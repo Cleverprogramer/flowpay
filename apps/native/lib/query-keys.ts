@@ -56,4 +56,20 @@ export const queryKeys = {
       ["reports", "monthly-trends", params] as const,
     walletBreakdown: () => ["reports", "wallet-breakdown"] as const,
   },
+  dashboard: {
+    all: ["dashboard"] as const,
+    summary: () => ["dashboard", "summary"] as const,
+  },
+  clients: {
+    all: ["clients"] as const,
+    list: (params?: Record<string, unknown>) =>
+      ["clients", "list", params] as const,
+    detail: (id: string) => ["clients", "detail", id] as const,
+  },
+  expenseSplits: {
+    all: ["expense-splits"] as const,
+    list: (params?: Record<string, unknown>) =>
+      ["expense-splits", "list", params] as const,
+    summary: () => ["expense-splits", "summary"] as const,
+  },
 };
