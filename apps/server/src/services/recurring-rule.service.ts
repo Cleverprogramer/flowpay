@@ -4,6 +4,7 @@ import { transaction } from "@flowpay/db/schema/transaction";
 import { wallet } from "@flowpay/db/schema/wallet";
 import { desc, eq, and, lte, sql } from "drizzle-orm";
 import { computeNextRunAt } from "@/utils/recurrence";
+import { recordBalanceChange } from "./balance-audit.service";
 
 const MAX_CATCH_UP_OCCURRENCES = 100;
 
@@ -132,27 +133,44 @@ export async function processDueRecurringRules(userId: string) {
     let occurrences = 0;
 
     while (cursor <= now && occurrences < MAX_CATCH_UP_OCCURRENCES) {
-      await db.insert(transaction).values({
-        userId: rule.userId,
-        walletId: rule.walletId,
-        categoryId: rule.categoryId,
-        type: rule.type,
-        amount: rule.amount,
-        description: rule.description,
-        note: rule.note,
-        transactionDate: cursor,
-        isRecurring: true,
-        recurringInterval: rule.interval,
-      });
+      const [created] = await db
+        .insert(transaction)
+        .values({
+          userId: rule.userId,
+          walletId: rule.walletId,
+          categoryId: rule.categoryId,
+          type: rule.type,
+          amount: rule.amount,
+          description: rule.description,
+          note: rule.note,
+          transactionDate: cursor,
+          isRecurring: true,
+          recurringInterval: rule.interval,
+        })
+        .returning({ id: transaction.id });
 
       const balanceChange =
         rule.type === "income" ? Number(rule.amount) : -Number(rule.amount);
-      await db
+      const [updatedWallet] = await db
         .update(wallet)
         .set({ balance: sql`${wallet.balance} + ${balanceChange}` })
         .where(
           and(eq(wallet.id, rule.walletId), eq(wallet.userId, rule.userId)),
+        )
+        .returning({ balance: wallet.balance });
+
+      if (created && updatedWallet) {
+        await recordBalanceChange({
+          userId: rule.userId,
+          walletId: rule.walletId,
+          transactionId: created.id,
+          reason: "recurring_generated",
+          changeAmount: balanceChange,
+          balanceAfter: Number(updatedWallet.balance),
+        }).catch((err) =>
+          console.error("Failed to record audit entry:", err),
         );
+      }
 
       lastRun = cursor;
       cursor = computeNextRunAt(cursor, rule.interval);

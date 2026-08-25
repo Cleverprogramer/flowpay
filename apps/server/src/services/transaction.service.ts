@@ -5,6 +5,7 @@ import { wallet } from "@flowpay/db/schema/wallet";
 import { eq, and, desc, sql, count, gte, lte } from "drizzle-orm";
 import { createNotification } from "./notification.service";
 import { checkBudgetAlerts } from "./budget-alert.service";
+import { recordBalanceChange } from "./balance-audit.service";
 
 export async function listTransactions(
   userId: string,
@@ -144,14 +145,26 @@ export async function createTransaction(
     })
     .returning();
 
-  // Update wallet balance atomically
+  // Update wallet balance atomically and journal the change
   const balanceChange = data.type === "income" ? data.amount : -data.amount;
-  await db
+  const [updatedWallet] = await db
     .update(wallet)
     .set({
       balance: sql`${wallet.balance} + ${balanceChange}`,
     })
-    .where(and(eq(wallet.id, data.walletId), eq(wallet.userId, userId)));
+    .where(and(eq(wallet.id, data.walletId), eq(wallet.userId, userId)))
+    .returning({ balance: wallet.balance });
+
+  if (updatedWallet && result) {
+    await recordBalanceChange({
+      userId,
+      walletId: data.walletId,
+      transactionId: result.id,
+      reason: "transaction_created",
+      changeAmount: balanceChange,
+      balanceAfter: Number(updatedWallet.balance),
+    }).catch((err) => console.error("Failed to record audit entry:", err));
+  }
 
   // Generate an automatic notification
   const capitalizedType =
@@ -215,12 +228,23 @@ export async function deleteTransaction(userId: string, id: string) {
     // Reverse the balance change
     const reversal =
       existing.type === "income" ? -existing.amount : existing.amount;
-    await db
+    const [revertedWallet] = await db
       .update(wallet)
       .set({
         balance: sql`${wallet.balance} + ${reversal}`,
       })
-      .where(and(eq(wallet.id, existing.walletId), eq(wallet.userId, userId)));
+      .where(and(eq(wallet.id, existing.walletId), eq(wallet.userId, userId)))
+      .returning({ balance: wallet.balance });
+
+    if (revertedWallet) {
+      await recordBalanceChange({
+        userId,
+        walletId: existing.walletId,
+        reason: "transaction_deleted",
+        changeAmount: reversal,
+        balanceAfter: Number(revertedWallet.balance),
+      }).catch((err) => console.error("Failed to record audit entry:", err));
+    }
   }
 
   return result ?? null;

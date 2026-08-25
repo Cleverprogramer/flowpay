@@ -10,3 +10,4 @@ export * from "./report.schema";
 export * from "./device.schema";
 export * from "./client.schema";
 export * from "./expense-split.schema";
+export * from "./balance-audit.schema";
