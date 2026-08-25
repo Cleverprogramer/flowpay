@@ -186,3 +186,62 @@ export async function processDueRecurringRules(userId: string) {
 
   return { processedRules: dueRules.length, createdTransactions };
 }
+
+const INTERVAL_MONTHLY_FACTOR = {
+  daily: 30,
+  weekly: 30 / 7,
+  monthly: 1,
+  yearly: 1 / 12,
+} as const;
+
+export async function pauseRecurringRule(userId: string, id: string) {
+  return updateRecurringRule(userId, id, { isActive: false });
+}
+
+export async function resumeRecurringRule(userId: string, id: string) {
+  const [rule] = await db
+    .select({ nextRunAt: recurringRule.nextRunAt })
+    .from(recurringRule)
+    .where(and(eq(recurringRule.id, id), eq(recurringRule.userId, userId)));
+  if (!rule) return null;
+
+  const now = new Date();
+  if (rule.nextRunAt <= now) {
+    const [fresh] = await db
+      .select({ interval: recurringRule.interval })
+      .from(recurringRule)
+      .where(eq(recurringRule.id, id));
+    if (fresh) {
+      const nextRunAt = computeNextRunAt(now, fresh.interval);
+      const [result] = await db
+        .update(recurringRule)
+        .set({ isActive: true, nextRunAt })
+        .where(eq(recurringRule.id, id))
+        .returning();
+      return result
+        ? { ...result, amount: Number(result.amount) }
+        : null;
+    }
+  }
+
+  return updateRecurringRule(userId, id, { isActive: true });
+}
+
+export async function listRecurringRulesWithCosts(userId: string) {
+  const rules = await listRecurringRules(userId);
+  return rules.map((rule) => ({
+    ...rule,
+    amount: Number(rule.amount),
+    monthlyEquivalent:
+      Math.round(
+        Number(rule.amount) * INTERVAL_MONTHLY_FACTOR[rule.interval] * 100,
+      ) / 100,
+    daysUntilNextRun: Math.max(
+      0,
+      Math.ceil(
+        (new Date(rule.nextRunAt).getTime() - Date.now()) /
+          (24 * 60 * 60 * 1000),
+      ),
+    ),
+  }));
+}

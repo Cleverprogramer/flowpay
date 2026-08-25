@@ -2,12 +2,14 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { authMiddleware } from "../middleware/auth";
 import {
-  listRecurringRules,
   getRecurringRuleById,
   createRecurringRule,
   updateRecurringRule,
   deleteRecurringRule,
   processDueRecurringRules,
+  pauseRecurringRule,
+  resumeRecurringRule,
+  listRecurringRulesWithCosts,
 } from "@/services/recurring-rule.service";
 import {
   createRecurringRuleSchema,
@@ -18,12 +20,26 @@ export const recurringRuleRoutes = new Hono()
   .use(authMiddleware)
   .get("/", async (c) => {
     const userId = c.get("userId");
-    const data = await listRecurringRules(userId);
+    const data = await listRecurringRulesWithCosts(userId);
     return c.json({ data });
   })
   .post("/process-due", async (c) => {
     const userId = c.get("userId");
     const data = await processDueRecurringRules(userId);
+    return c.json({ data });
+  })
+  .post("/:id/pause", async (c) => {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+    const data = await pauseRecurringRule(userId, id);
+    if (!data) return c.json({ error: "Recurring rule not found" }, 404);
+    return c.json({ data });
+  })
+  .post("/:id/resume", async (c) => {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+    const data = await resumeRecurringRule(userId, id);
+    if (!data) return c.json({ error: "Recurring rule not found" }, 404);
     return c.json({ data });
   })
   .get("/:id", async (c) => {
