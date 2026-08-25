@@ -1,0 +1,2 @@
+CREATE INDEX "transaction_userTypeDateIdx" ON "transaction" USING btree ("user_id","type","transaction_date");--> statement-breakpoint
+CREATE INDEX "notification_userRead_idx" ON "notification" USING btree ("user_id","is_read");

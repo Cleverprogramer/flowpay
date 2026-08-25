@@ -47,5 +47,10 @@ export const transaction = pgTable(
     index("transaction_categoryId_idx").on(table.categoryId),
     index("transaction_date_idx").on(table.transactionDate),
     index("transaction_type_idx").on(table.type),
+    index("transaction_userTypeDateIdx").on(
+      table.userId,
+      table.type,
+      table.transactionDate,
+    ),
   ],
 );
