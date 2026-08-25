@@ -72,7 +72,7 @@ export async function convertCurrency(
   }
 
   const [direct] = await db
-    .select({ rate: currencyRate.rate })
+    .select({ rate: currencyRate.rate, updatedAt: currencyRate.updatedAt })
     .from(currencyRate)
     .where(
       and(
@@ -91,11 +91,12 @@ export async function convertCurrency(
       converted: convertAmount(query.amount, rate),
       rate,
       source: "stored" as const,
+      rateUpdatedAt: direct.updatedAt,
     };
   }
 
   const [inverse] = await db
-    .select({ rate: currencyRate.rate })
+    .select({ rate: currencyRate.rate, updatedAt: currencyRate.updatedAt })
     .from(currencyRate)
     .where(
       and(
@@ -114,6 +115,7 @@ export async function convertCurrency(
       converted: convertAmount(query.amount, rate),
       rate,
       source: "inverted" as const,
+      rateUpdatedAt: inverse.updatedAt,
     };
   }
 
