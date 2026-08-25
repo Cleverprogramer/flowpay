@@ -26,6 +26,10 @@ import { currencyRateRoutes } from "./routes/currency-rate.routes";
 import { walletTransferRoutes } from "./routes/wallet-transfer.routes";
 import { tagRoutes } from "./routes/tag.routes";
 import { invoicePaymentRoutes } from "./routes/invoice-payment.routes";
+import {
+  invoiceShareRoutes,
+  publicInvoiceRoutes,
+} from "./routes/invoice-share.routes";
 
 const app = new Hono()
   .use(logger())
@@ -62,7 +66,9 @@ const app = new Hono()
   .route("/api/currency-rate", currencyRateRoutes)
   .route("/api/transfer", walletTransferRoutes)
   .route("/api/tag", tagRoutes)
-  .route("/api/invoice-payment", invoicePaymentRoutes);
+  .route("/api/invoice-payment", invoicePaymentRoutes)
+  .route("/api/invoice", invoiceShareRoutes)
+  .route("/api/public", publicInvoiceRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);

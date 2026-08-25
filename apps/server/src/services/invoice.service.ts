@@ -204,7 +204,12 @@ export async function deleteInvoice(userId: string, id: string) {
 export async function generateInvoiceHtml(userId: string, id: string) {
   const data = await getInvoiceById(userId, id);
   if (!data) return null;
+  return renderInvoiceHtml(data);
+}
 
+export function renderInvoiceHtml(
+  data: NonNullable<Awaited<ReturnType<typeof getInvoiceById>>>,
+): string {
   const statusColors: Record<string, string> = {
     draft: "#6B7280",
     sent: "#3B82F6",
