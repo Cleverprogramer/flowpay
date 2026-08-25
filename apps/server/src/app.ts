@@ -48,6 +48,16 @@ const app = new Hono()
   .use(etag())
   .use(requestIdMiddleware)
   .use(bodySizeLimit)
+  .use("/api/*", async (c, next) => {
+    await next();
+    if (
+      c.req.method === "GET" &&
+      !c.req.path.startsWith("/api/health") &&
+      !c.req.path.startsWith("/api/public")
+    ) {
+      c.header("Cache-Control", "no-store");
+    }
+  })
   .use(
     "/*",
     cors({
