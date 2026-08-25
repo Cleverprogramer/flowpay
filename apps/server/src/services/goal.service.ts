@@ -1,6 +1,8 @@
 import { db } from "@flowpay/db";
 import { goal } from "@flowpay/db/schema/goal";
 import { desc, eq, and, sql } from "drizzle-orm";
+import { findCrossedMilestone } from "@/utils/milestones";
+import { createNotification } from "./notification.service";
 
 function withProgress(row: typeof goal.$inferSelect) {
   const target = Number(row.targetAmount);
@@ -115,6 +117,9 @@ export async function contributeToGoal(
   id: string,
   amount: number,
 ) {
+  const before = await getGoalById(userId, id);
+  if (!before) return null;
+
   const [result] = await db
     .update(goal)
     .set({ savedAmount: sql`${goal.savedAmount} + ${amount}` })
@@ -125,15 +130,30 @@ export async function contributeToGoal(
 
   const completed = Number(result.savedAmount) >= Number(result.targetAmount);
   if (completed && !result.isCompleted) {
-    const [updated] = await db
+    await db
       .update(goal)
       .set({ isCompleted: true })
-      .where(eq(goal.id, result.id))
-      .returning();
-    return updated ? withProgress(updated) : null;
+      .where(eq(goal.id, result.id));
+    result.isCompleted = true;
   }
 
-  return withProgress(result);
+  const progress = withProgress(result);
+  const milestone = findCrossedMilestone(
+    before.percentage,
+    progress.percentage,
+  );
+
+  if (milestone) {
+    await createNotification(userId, {
+      title:
+        milestone === 100 ? "Goal Completed! 🎉" : `${milestone}% of Goal! 🎯`,
+      description: `"${result.name}" is now at ${progress.percentage}% ($${progress.savedAmount.toLocaleString()} of $${progress.targetAmount.toLocaleString()})`,
+      type: "success",
+      category: "budget",
+    }).catch(() => undefined);
+  }
+
+  return progress;
 }
 
 export async function deleteGoal(userId: string, id: string) {
