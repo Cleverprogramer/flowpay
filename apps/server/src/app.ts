@@ -25,6 +25,7 @@ import { dashboardRoutes } from "./routes/dashboard.routes";
 import { currencyRateRoutes } from "./routes/currency-rate.routes";
 import { walletTransferRoutes } from "./routes/wallet-transfer.routes";
 import { tagRoutes } from "./routes/tag.routes";
+import { invoicePaymentRoutes } from "./routes/invoice-payment.routes";
 
 const app = new Hono()
   .use(logger())
@@ -60,7 +61,8 @@ const app = new Hono()
   .route("/api/dashboard", dashboardRoutes)
   .route("/api/currency-rate", currencyRateRoutes)
   .route("/api/transfer", walletTransferRoutes)
-  .route("/api/tag", tagRoutes);
+  .route("/api/tag", tagRoutes)
+  .route("/api/invoice-payment", invoicePaymentRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
