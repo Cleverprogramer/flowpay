@@ -8,6 +8,7 @@ import {
   updateGoal,
   contributeToGoal,
   deleteGoal,
+  getGoalsSummary,
 } from "@/services/goal.service";
 import {
   createGoalSchema,
@@ -20,6 +21,11 @@ export const goalRoutes = new Hono()
   .get("/", async (c) => {
     const userId = c.get("userId");
     const data = await listGoals(userId);
+    return c.json({ data });
+  })
+  .get("/summary", async (c) => {
+    const userId = c.get("userId");
+    const data = await getGoalsSummary(userId);
     return c.json({ data });
   })
   .get("/:id", async (c) => {

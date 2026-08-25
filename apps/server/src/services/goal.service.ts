@@ -7,6 +7,14 @@ import { createNotification } from "./notification.service";
 function withProgress(row: typeof goal.$inferSelect) {
   const target = Number(row.targetAmount);
   const saved = Number(row.savedAmount);
+  const daysRemaining = row.targetDate
+    ? Math.max(
+        0,
+        Math.ceil(
+          (row.targetDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000),
+        ),
+      )
+    : null;
   return {
     ...row,
     targetAmount: target,
@@ -14,6 +22,7 @@ function withProgress(row: typeof goal.$inferSelect) {
     remaining: Math.max(0, target - saved),
     percentage:
       target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0,
+    daysRemaining,
   };
 }
 
@@ -153,7 +162,7 @@ export async function contributeToGoal(
     }).catch(() => undefined);
   }
 
-  return progress;
+  return { ...progress, milestoneReached: milestone };
 }
 
 export async function deleteGoal(userId: string, id: string) {
@@ -162,4 +171,25 @@ export async function deleteGoal(userId: string, id: string) {
     .where(and(eq(goal.id, id), eq(goal.userId, userId)))
     .returning();
   return result ?? null;
+}
+
+export async function getGoalsSummary(userId: string) {
+  const rows = await listGoals(userId);
+  const totalTarget =
+    Math.round(rows.reduce((sum, item) => sum + item.targetAmount, 0) * 100) /
+    100;
+  const totalSaved =
+    Math.round(rows.reduce((sum, item) => sum + item.savedAmount, 0) * 100) /
+    100;
+
+  return {
+    goalCount: rows.length,
+    completedCount: rows.filter((row) => row.isCompleted).length,
+    totalTarget,
+    totalSaved,
+    overallPercentage:
+      totalTarget > 0
+        ? Math.min(100, Math.round((totalSaved / totalTarget) * 100))
+        : 0,
+  };
 }
