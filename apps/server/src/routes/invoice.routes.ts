@@ -14,6 +14,7 @@ import {
   deleteInvoice,
   generateInvoiceHtml,
 } from "../services/invoice.service";
+import { processInvoiceReminders } from "@/services/invoice-reminder.service";
 
 export const invoiceRoutes = new Hono()
   .use(authMiddleware)
@@ -22,6 +23,11 @@ export const invoiceRoutes = new Hono()
     const params = c.req.valid("query");
     const result = await listInvoices(userId, params);
     return c.json(result);
+  })
+  .post("/process-reminders", async (c) => {
+    const userId = c.get("userId");
+    const data = await processInvoiceReminders(userId);
+    return c.json({ data });
   })
   .get("/:id", async (c) => {
     const userId = c.get("userId");
