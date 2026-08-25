@@ -26,11 +26,18 @@ function withProgress(row: typeof goal.$inferSelect) {
   };
 }
 
-export async function listGoals(userId: string) {
+export async function listGoals(
+  userId: string,
+  options?: { status?: "active" | "completed" },
+) {
+  const conditions = [eq(goal.userId, userId)];
+  if (options?.status === "active") conditions.push(eq(goal.isCompleted, false));
+  if (options?.status === "completed") conditions.push(eq(goal.isCompleted, true));
+
   const data = await db
     .select()
     .from(goal)
-    .where(eq(goal.userId, userId))
+    .where(and(...conditions))
     .orderBy(desc(goal.createdAt));
   return data.map(withProgress);
 }

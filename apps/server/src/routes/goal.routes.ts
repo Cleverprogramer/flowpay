@@ -20,7 +20,11 @@ export const goalRoutes = new Hono()
   .use(authMiddleware)
   .get("/", async (c) => {
     const userId = c.get("userId");
-    const data = await listGoals(userId);
+    const status = c.req.query("status");
+    const data = await listGoals(userId, {
+      status:
+        status === "active" || status === "completed" ? status : undefined,
+    });
     return c.json({ data });
   })
   .get("/summary", async (c) => {
