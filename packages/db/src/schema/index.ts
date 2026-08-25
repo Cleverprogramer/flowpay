@@ -14,4 +14,5 @@ export * from "./balance-audit";
 export * from "./categorization-rule";
 export * from "./notification-preference";
 export * from "./currency-rate";
+export * from "./wallet-transfer";
 export {};
