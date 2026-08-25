@@ -14,6 +14,7 @@ import { ONBOARDING_FONT_FAMILY } from "@/lib/const/onboarding-typography";
 import { Link, router } from "expo-router";
 import { GeneralSearch } from "@/components/ui/icons/GeneralSearch";
 import { GeneralAlarm } from "@/components/ui/icons/GeneralAlarm";
+import { Ionicons } from "@expo/vector-icons";
 import FlowpayCardBalance from "@/components/containers/flowpay-card-balance";
 import FlowpayIncomeExpense from "@/components/containers/flowpay-income-expense";
 import FlowpayBudgetPlanCard from "@/components/containers/flowpay-budget-plan-card";
@@ -21,6 +22,7 @@ import { useThemeColors } from "@/lib/use-theme-colors";
 import { useWallets } from "@/hooks/use-wallet";
 import { useTransactionSummary } from "@/hooks/use-transactions";
 import { useInvoices } from "@/hooks/use-invoice";
+import { useGoals } from "@/hooks/use-goals";
 import FlowpayInvoiceCard from "@/components/containers/flowpay-invoice-card";
 import { format } from "date-fns";
 import { InvoiceStatus } from "@/types/invoice";
@@ -130,6 +132,18 @@ export default function Home() {
   });
   const recentInvoices = invoicesResponse?.data ?? [];
 
+  const { data: goalsResponse } = useGoals();
+  const goals = ((goalsResponse as any)?.data ?? []) as Array<{
+    savedAmount: number;
+    targetAmount: number;
+  }>;
+  const totalSaved = goals.reduce((sum, g) => sum + g.savedAmount, 0);
+  const totalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
+  const goalsPercentage =
+    totalTarget > 0
+      ? Math.min(100, Math.round((totalSaved / totalTarget) * 100))
+      : 0;
+
   return (
     <Container className="p-4 md:p-6" isScrollable={false}>
       <ScrollView
@@ -208,6 +222,39 @@ export default function Home() {
         </View>
 
         <View className="flex-col w-full gap-y-2.5 mb-7">
+          <Link href="/goals" asChild>
+            <Pressable
+              className="w-full rounded-[30px] bg-brand-flashwhite dark:bg-brand-green-800 p-4 border-0"
+              style={{ borderCurve: "continuous" }}
+            >
+              <View className="flex-row items-center justify-between mb-2">
+                <View className="flex-row items-center gap-x-3">
+                  <Text className="text-[20px]">🎯</Text>
+                  <Text
+                    className="text-[16px] text-brand-black dark:text-brand-white"
+                    style={{ fontFamily: "PlusJakartaSans_700Bold" }}
+                  >
+                    Savings Goals
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={iconColor} />
+              </View>
+              <View className="h-1.5 w-full rounded-full bg-brand-white dark:bg-brand-green-500 overflow-hidden mb-1.5">
+                <View
+                  className="h-1.5 rounded-full bg-brand-green-500 dark:bg-brand-white"
+                  style={{ width: `${Math.max(goalsPercentage, 2)}%` }}
+                />
+              </View>
+              <Text
+                className="text-[12px] text-brand-grey dark:text-gray-400"
+                style={{ fontFamily: "PlusJakartaSans_400Regular" }}
+              >
+                ${totalSaved.toLocaleString()} saved · {goalsPercentage}% of $
+                {totalTarget.toLocaleString()}
+              </Text>
+            </Pressable>
+          </Link>
+
           <FlowpayIncomeExpense
             incomeAmount={monthlyIncome}
             expenseAmount={monthlyExpense}
