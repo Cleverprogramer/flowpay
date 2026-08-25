@@ -39,7 +39,16 @@ export const transactionSummarySchema = z.object({
   walletId: z.string().optional(),
 });
 
+export const searchTransactionsSchema = z.object({
+  q: z.string().min(1).max(100),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(20),
+});
+
 export type CreateTransactionInput = z.infer<typeof createTransactionSchema>;
 export type UpdateTransactionInput = z.infer<typeof updateTransactionSchema>;
 export type ListTransactionsQuery = z.infer<typeof listTransactionsSchema>;
 export type TransactionSummaryQuery = z.infer<typeof transactionSummarySchema>;
+export type SearchTransactionsQuery = z.infer<
+  typeof searchTransactionsSchema
+>;

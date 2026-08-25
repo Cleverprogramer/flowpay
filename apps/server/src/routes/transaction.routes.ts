@@ -7,12 +7,14 @@ import {
   listTransactions,
   updateTransaction,
   exportTransactions,
+  searchTransactions,
 } from "@/services/transaction.service";
 import {
   createTransactionSchema,
   listTransactionsSchema,
   transactionSummarySchema,
   updateTransactionSchema,
+  searchTransactionsSchema,
 } from "@flowpay/schema/transaction.schema";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
@@ -53,6 +55,16 @@ export const transactionRoutes = new Hono()
       "Content-Disposition": 'attachment; filename="transactions.csv"',
     });
   })
+  .get(
+    "/search",
+    zValidator("query", searchTransactionsSchema),
+    async (c) => {
+      const userId = c.get("userId");
+      const params = c.req.valid("query");
+      const result = await searchTransactions(userId, params);
+      return c.json(result);
+    },
+  )
   .get("/:id", async (c) => {
     const userId = c.get("userId");
     const id = c.req.param("id");

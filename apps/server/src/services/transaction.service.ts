@@ -2,7 +2,7 @@ import { db } from "@flowpay/db";
 import { category } from "@flowpay/db/schema/category";
 import { transaction } from "@flowpay/db/schema/transaction";
 import { wallet } from "@flowpay/db/schema/wallet";
-import { eq, and, desc, sql, count, gte, lte } from "drizzle-orm";
+import { eq, and, desc, sql, count, gte, lte, ilike, or } from "drizzle-orm";
 import { createNotification } from "./notification.service";
 import { checkBudgetAlerts } from "./budget-alert.service";
 import { recordBalanceChange } from "./balance-audit.service";
@@ -334,4 +334,51 @@ export async function exportTransactions(
     .leftJoin(wallet, eq(transaction.walletId, wallet.id))
     .where(and(...conditions))
     .orderBy(desc(transaction.transactionDate));
+}
+
+export async function searchTransactions(
+  userId: string,
+  params: { q: string; page: number; limit: number },
+) {
+  const term = `%${params.q}%`;
+  const whereClause = and(
+    eq(transaction.userId, userId),
+    or(
+      ilike(transaction.description, term),
+      ilike(transaction.note, term),
+    ),
+  );
+  const offset = (params.page - 1) * params.limit;
+
+  const [data, totalResult] = await Promise.all([
+    db
+      .select({
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        description: transaction.description,
+        note: transaction.note,
+        transactionDate: transaction.transactionDate,
+        categoryEmoji: category.emoji,
+        walletName: wallet.name,
+      })
+      .from(transaction)
+      .leftJoin(category, eq(transaction.categoryId, category.id))
+      .leftJoin(wallet, eq(transaction.walletId, wallet.id))
+      .where(whereClause)
+      .orderBy(desc(transaction.transactionDate))
+      .limit(params.limit)
+      .offset(offset),
+    db.select({ count: count() }).from(transaction).where(whereClause),
+  ]);
+
+  return {
+    data: data.map((row) => ({ ...row, amount: Number(row.amount) })),
+    pagination: {
+      page: params.page,
+      limit: params.limit,
+      total: totalResult[0]?.count ?? 0,
+      totalPages: Math.ceil((totalResult[0]?.count ?? 0) / params.limit),
+    },
+  };
 }
