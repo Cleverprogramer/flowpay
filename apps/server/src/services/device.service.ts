@@ -67,6 +67,15 @@ export async function listDevices(userId: string) {
     .where(and(eq(device.userId, userId), eq(device.isActive, true)));
 }
 
+export async function deactivateAllDevices(userId: string) {
+  const rows = await db
+    .update(device)
+    .set({ isActive: false })
+    .where(and(eq(device.userId, userId), eq(device.isActive, true)))
+    .returning({ id: device.id });
+  return { deactivated: rows.length };
+}
+
 export async function getActivePushTokens(userId: string) {
   const rows = await db
     .select({ expoPushToken: device.expoPushToken })

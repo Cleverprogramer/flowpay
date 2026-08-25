@@ -5,6 +5,7 @@ import {
   registerDevice,
   unregisterDevice,
   listDevices,
+  deactivateAllDevices,
 } from "@/services/device.service";
 import { registerDeviceSchema } from "@flowpay/schema/device.schema";
 
@@ -20,6 +21,11 @@ export const deviceRoutes = new Hono()
     const body = c.req.valid("json");
     const data = await registerDevice(userId, body);
     return c.json({ data }, 201);
+  })
+  .delete("/", async (c) => {
+    const userId = c.get("userId");
+    const data = await deactivateAllDevices(userId);
+    return c.json({ data });
   })
   .delete("/:token", async (c) => {
     const userId = c.get("userId");
