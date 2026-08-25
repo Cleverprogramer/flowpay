@@ -1,8 +1,13 @@
 import { db } from "@flowpay/db";
 import { recurringRule } from "@flowpay/db/schema/recurring-rule";
 import { wallet } from "@flowpay/db/schema/wallet";
+import { currencyRate } from "@flowpay/db/schema/currency-rate";
 import { and, eq, lte, sql } from "drizzle-orm";
 import { computeNextRunAt } from "@/utils/recurrence";
+import {
+  convertAmount,
+  invertRate,
+} from "@/utils/currency";
 
 export async function getNetWorth(userId: string) {
   const rows = await db
@@ -14,13 +19,49 @@ export async function getNetWorth(userId: string) {
     .where(and(eq(wallet.userId, userId), eq(wallet.archived, false)))
     .groupBy(wallet.currency);
 
+  const byCurrency = rows.map((row) => ({
+    currency: row.currency,
+    total: Number(row.total),
+  }));
+
+  const primaryCurrency = byCurrency[0]?.currency ?? "USD";
+
+  const rates = await db
+    .select()
+    .from(currencyRate)
+    .where(eq(currencyRate.userId, userId));
+
+  const rateFor = (from: string, to: string): number | null => {
+    if (from === to) return 1;
+    const direct = rates.find(
+      (rate) =>
+        rate.baseCurrency === from && rate.targetCurrency === to,
+    );
+    if (direct) return Number(direct.rate);
+    const inverse = rates.find(
+      (rate) =>
+        rate.baseCurrency === to && rate.targetCurrency === from,
+    );
+    return inverse ? invertRate(Number(inverse.rate)) : null;
+  };
+
+  let convertedTotal = 0;
+  let fullyConverted = true;
+
+  for (const entry of byCurrency) {
+    const rate = rateFor(entry.currency, primaryCurrency);
+    if (rate === null) {
+      fullyConverted = false;
+      continue;
+    }
+    convertedTotal += convertAmount(entry.total, rate);
+  }
+
   return {
-    byCurrency: rows.map((row) => ({
-      currency: row.currency,
-      total: Number(row.total),
-    })),
-    primaryCurrency: rows[0]?.currency ?? "USD",
-    netWorth: Number(rows.find((row) => row.currency === (rows[0]?.currency ?? "USD"))?.total ?? 0),
+    byCurrency,
+    primaryCurrency,
+    netWorth: convertedTotal,
+    convertedToFx: fullyConverted && byCurrency.length > 1,
     walletCount: rows.length,
   };
 }
