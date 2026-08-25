@@ -116,3 +116,37 @@ export async function getWalletBreakdown(userId: string) {
 
   return rows.map((row) => ({ ...row, balance: Number(row.balance) }));
 }
+
+export async function getDailyActivity(userId: string, month: string) {
+  const match = /^(\d{4})-(\d{2})$/.exec(month);
+  if (!match) throw new Error("month must be YYYY-MM");
+
+  const year = Number(match[1]);
+  const monthIndex = Number(match[2]) - 1;
+  const start = new Date(Date.UTC(year, monthIndex, 1));
+  const end = new Date(Date.UTC(year, monthIndex + 1, 0, 23, 59, 59));
+
+  const rows = await db
+    .select({
+      day: sql<string>`EXTRACT(DAY FROM ${transaction.transactionDate})::int`,
+      income: sql<string>`COALESCE(SUM(CASE WHEN ${transaction.type} = 'income' THEN ${transaction.amount} ELSE 0 END), 0)`,
+      expense: sql<string>`COALESCE(SUM(CASE WHEN ${transaction.type} = 'expense' THEN ${transaction.amount} ELSE 0 END), 0)`,
+    })
+    .from(transaction)
+    .where(
+      and(
+        eq(transaction.userId, userId),
+        gte(transaction.transactionDate, start),
+        lte(transaction.transactionDate, end),
+      ),
+    )
+    .groupBy(sql`EXTRACT(DAY FROM ${transaction.transactionDate})`)
+    .orderBy(sql`EXTRACT(DAY FROM ${transaction.transactionDate})`);
+
+  return rows.map((row) => ({
+    day: row.day,
+    income: Number(row.income),
+    expense: Number(row.expense),
+    net: Number(row.income) - Number(row.expense),
+  }));
+}

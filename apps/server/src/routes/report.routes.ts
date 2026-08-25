@@ -5,10 +5,12 @@ import {
   getSpendingByCategory,
   getMonthlyTrends,
   getWalletBreakdown,
+  getDailyActivity,
 } from "@/services/report.service";
 import {
   reportRangeSchema,
   monthlyTrendsSchema,
+  dailyActivitySchema,
 } from "@flowpay/schema/report.schema";
 
 export const reportRoutes = new Hono()
@@ -37,4 +39,18 @@ export const reportRoutes = new Hono()
     const userId = c.get("userId");
     const data = await getWalletBreakdown(userId);
     return c.json({ data });
-  });
+  })
+  .get(
+    "/daily-activity",
+    zValidator("query", dailyActivitySchema),
+    async (c) => {
+      const userId = c.get("userId");
+      const { month } = c.req.valid("query");
+      try {
+        const data = await getDailyActivity(userId, month);
+        return c.json({ data });
+      } catch {
+        return c.json({ error: "Invalid month format" }, 400);
+      }
+    },
+  );
