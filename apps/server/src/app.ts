@@ -3,6 +3,7 @@ import { env } from "@flowpay/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { createRateLimiter } from "./middleware/rate-limit";
 import { categoryRoutes } from "./routes/category.routes";
 import { walletRoutes } from "./routes/wallet.routes";
 import { budgetRoutes } from "./routes/budget.routes";
@@ -26,6 +27,7 @@ const app = new Hono()
     }),
   )
   .on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+  .use("/api/*", createRateLimiter({ windowMs: 60_000, max: 120 }))
 
   .route("/api/category", categoryRoutes)
   .route("/api/wallet", walletRoutes)
