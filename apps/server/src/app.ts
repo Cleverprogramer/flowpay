@@ -34,6 +34,7 @@ import { forecastRoutes } from "./routes/forecast.routes";
 import { bulkRoutes } from "./routes/bulk.routes";
 import { importRoutes } from "./routes/import.routes";
 import { templateRoutes } from "./routes/transaction-template.routes";
+import { insightRoutes } from "./routes/insight.routes";
 
 const app = new Hono()
   .use(logger())
@@ -76,7 +77,8 @@ const app = new Hono()
   .route("/api/forecast", forecastRoutes)
   .route("/api/bulk", bulkRoutes)
   .route("/api/import", importRoutes)
-  .route("/api/template", templateRoutes);
+  .route("/api/template", templateRoutes)
+  .route("/api/insight", insightRoutes);
 
 app.onError((err, c) => {
   console.error("[Server Error]", err);
