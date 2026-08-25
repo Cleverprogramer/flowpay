@@ -21,6 +21,7 @@
     "build": "turbo build",
     "check-types": "turbo check-types",
     "test:server": "turbo -F server test",
+    "test": "turbo test",
     "dev:native": "turbo -F native dev",
     "dev:server": "turbo -F server dev",
     "db:push": "turbo -F @flowpay/db db:push",
