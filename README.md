@@ -218,7 +218,15 @@ All API routes live under `/api`. Finance routes are designed for authenticated 
 | Recurring Rules | `GET /api/recurring-rule`, `POST /api/recurring-rule/process-due`, `GET /api/recurring-rule/:id`, `POST /api/recurring-rule`, `PUT /api/recurring-rule/:id`, `DELETE /api/recurring-rule/:id` |
 | Reports | `GET /api/report/spending-by-category`, `GET /api/report/monthly-trends?months=6`, `GET /api/report/wallet-breakdown` |
 | Devices | `GET /api/device`, `POST /api/device`, `DELETE /api/device/:token` |
-| Invoices | `GET /api/invoice`, `GET /api/invoice/:id`, `GET /api/invoice/:id/html`, `POST /api/invoice`, `PATCH /api/invoice/:id/status`, `DELETE /api/invoice/:id` |
+| Clients | `GET /api/client`, `GET /api/client/:id`, `GET /api/client/:id/invoice-summary`, `POST /api/client`, `PUT /api/client/:id`, `DELETE /api/client/:id` |
+| Expense Splits | `GET /api/expense-split`, `GET /api/expense-split/summary`, `POST /api/expense-split/even`, `POST /api/expense-split`, `PATCH /api/expense-split/:id/settle`, `DELETE /api/expense-split/:id` |
+| Balance Audit | `GET /api/balance-audit` |
+| Categorization Rules | `GET /api/categorization-rule`, `POST /api/categorization-rule/suggest`, `POST /api/categorization-rule`, `PUT /api/categorization-rule/:id`, `DELETE /api/categorization-rule/:id` |
+| Notification Prefs | `GET /api/notification-preference`, `PUT /api/notification-preference` |
+| Dashboard | `GET /api/dashboard` |
+| Currency Rates | `GET /api/currency-rate`, `GET /api/currency-rate/convert`, `PUT /api/currency-rate`, `DELETE /api/currency-rate/:id` |
+| Health | `GET /api/health` |
+| Invoices | `GET /api/invoice`, `GET /api/invoice/:id`, `GET /api/invoice/:id/html`, `POST /api/invoice/process-reminders`, `POST /api/invoice`, `PATCH /api/invoice/:id/status`, `DELETE /api/invoice/:id` |
 | Notifications | `GET /api/notification`, `POST /api/notification`, `PATCH /api/notification/mark-all-read`, `PATCH /api/notification/:id/read` |
 
 All finance routes are rate-limited with standard `X-RateLimit-*` response headers.
@@ -240,13 +248,18 @@ erDiagram
     USER ||--o{ INVOICE : sends
     USER ||--o{ NOTIFICATION : receives
     USER ||--o{ DEVICE : registers
+    USER ||--o{ CLIENT : manages
+    USER ||--o{ EXPENSE_SPLIT : shares
+    USER ||--o{ BALANCE_AUDIT : journals
+    USER ||--o{ CURRENCY_RATE : maintains
+    TRANSACTION ||--o{ EXPENSE_SPLIT : divides
     WALLET ||--o{ TRANSACTION : contains
     CATEGORY ||--o{ TRANSACTION : classifies
     CATEGORY ||--o{ BUDGET : limits
     INVOICE ||--o{ INVOICE_ITEM : includes
 ```
 
-Core tables include auth users, sessions, accounts, wallets, categories, transactions, budgets, goals, recurring rules, invoices, invoice items, devices, and notifications.
+Core tables include auth users, sessions, accounts, wallets, categories, transactions, budgets, goals, recurring rules, invoices, invoice items, clients, expense splits, balance audit entries, currency rates, devices, and notifications.
 
 ## Development Flow
 
