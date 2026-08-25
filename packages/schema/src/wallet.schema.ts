@@ -15,6 +15,7 @@ export const updateWalletSchema = z.object({
   currency: z.string().min(1).max(10).optional(),
   isDefault: z.boolean().optional(),
   archived: z.boolean().optional(),
+  monthlyLimit: z.number().positive().nullable().optional(),
 });
 
 export const listWalletsQuerySchema = z.object({

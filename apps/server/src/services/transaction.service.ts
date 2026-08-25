@@ -7,6 +7,7 @@ import { createNotification } from "./notification.service";
 import { checkBudgetAlerts } from "./budget-alert.service";
 import { recordBalanceChange } from "./balance-audit.service";
 import { suggestCategory } from "./categorization-rule.service";
+import { evaluateWalletLimit } from "./wallet-limit.service";
 
 export async function listTransactions(
   userId: string,
@@ -191,6 +192,9 @@ export async function createTransaction(
   if (data.type === "expense") {
     await checkBudgetAlerts(userId).catch((err) =>
       console.error("Failed to check budget alerts:", err),
+    );
+    await evaluateWalletLimit(userId, data.walletId).catch((err) =>
+      console.error("Failed to evaluate wallet limit:", err),
     );
   }
 

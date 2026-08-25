@@ -9,6 +9,7 @@ import {
   updateWallet,
   deleteWallet,
 } from "@/services/wallet.service";
+import { getWalletLimitStatus } from "@/services/wallet-limit.service";
 import {
   createWalletSchema,
   updateWalletSchema,
@@ -40,6 +41,13 @@ export const walletRoutes = new Hono()
     const body = c.req.valid("json");
     const data = await createWallet(userId, body);
     return c.json({ data }, 201);
+  })
+  .get("/:id/limit-status", async (c) => {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+    const data = await getWalletLimitStatus(userId, id);
+    if (!data) return c.json({ error: "Wallet not found" }, 404);
+    return c.json({ data });
   })
   .put("/:id", zValidator("json", updateWalletSchema), async (c) => {
     const userId = c.get("userId");
