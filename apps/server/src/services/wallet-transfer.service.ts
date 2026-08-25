@@ -53,7 +53,11 @@ export async function createTransfer(userId: string, data: CreateTransferInput) 
   }
 
   const owned = await db
-    .select({ id: wallet.id, balance: wallet.balance })
+    .select({
+      id: wallet.id,
+      balance: wallet.balance,
+      archived: wallet.archived,
+    })
     .from(wallet)
     .where(
       and(
@@ -69,6 +73,9 @@ export async function createTransfer(userId: string, data: CreateTransferInput) 
   const destination = owned.find((row) => row.id === data.destinationWalletId);
   if (!source || !destination) {
     return { error: "Both wallets must belong to you" as const };
+  }
+  if (source.archived || destination.archived) {
+    return { error: "Archived wallets cannot transfer funds" as const };
   }
   if (Number(source.balance) < data.amount + (data.fee ?? 0)) {
     return { error: "Insufficient balance in source wallet" as const };
