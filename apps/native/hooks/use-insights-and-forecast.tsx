@@ -34,6 +34,22 @@ export function useNetWorth() {
   });
 }
 
+export function useSavingsRate(params?: {
+  startDate?: string;
+  endDate?: string;
+}) {
+  return useQuery({
+    queryKey: ["insights", "savings-rate", params] as const,
+    queryFn: async () => {
+      const res = await api.api.insight["savings-rate"].$get({
+        query: params ?? {},
+      });
+      if (!res.ok) throw new Error("Failed to fetch savings rate");
+      return res.json();
+    },
+  });
+}
+
 export function useCashFlowProjection() {
   return useQuery({
     queryKey: ["forecast", "cash-flow"] as const,
