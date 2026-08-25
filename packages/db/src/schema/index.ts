@@ -10,4 +10,5 @@ export * from "./recurring-rule";
 export * from "./device";
 export * from "./client";
 export * from "./expense-split";
+export * from "./balance-audit";
 export {};
