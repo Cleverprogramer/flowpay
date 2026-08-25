@@ -5,7 +5,7 @@ export const createBudgetSchema = z.object({
   amount: z.number().positive(),
   period: z.enum(["weekly", "monthly", "yearly"]),
   startDate: z.iso.datetime(),
-  endDate: z.iso.datetime(),
+  endDate: z.iso.datetime().optional(),
 });
 
 export const updateBudgetSchema = z.object({

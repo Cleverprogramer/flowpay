@@ -72,6 +72,18 @@ export async function getBudgetById(userId: string, id: string) {
   };
 }
 
+export function computePeriodEnd(
+  startDate: Date,
+  period: "weekly" | "monthly" | "yearly",
+): Date {
+  const end = new Date(startDate);
+  if (period === "weekly") end.setUTCDate(end.getUTCDate() + 7);
+  else if (period === "monthly") end.setUTCMonth(end.getUTCMonth() + 1);
+  else end.setUTCFullYear(end.getUTCFullYear() + 1);
+  end.setUTCMilliseconds(-1);
+  return end;
+}
+
 export async function createBudget(
   userId: string,
   data: {
@@ -79,9 +91,13 @@ export async function createBudget(
     amount: number;
     period: "weekly" | "monthly" | "yearly";
     startDate: string;
-    endDate: string;
+    endDate?: string;
   },
 ) {
+  const startDate = new Date(data.startDate);
+  const endDate = data.endDate
+    ? new Date(data.endDate)
+    : computePeriodEnd(startDate, data.period);
   // Calculate current spent for this category in the date range
   const [spentResult] = await db
     .select({
@@ -93,8 +109,8 @@ export async function createBudget(
         eq(transaction.userId, userId),
         eq(transaction.categoryId, data.categoryId),
         eq(transaction.type, "expense"),
-        gte(transaction.transactionDate, new Date(data.startDate)),
-        lte(transaction.transactionDate, new Date(data.endDate)),
+        gte(transaction.transactionDate, startDate),
+        lte(transaction.transactionDate, endDate),
       ),
     );
 
@@ -106,8 +122,8 @@ export async function createBudget(
       amount: String(data.amount),
       period: data.period,
       spent: spentResult?.total ?? "0",
-      startDate: new Date(data.startDate),
-      endDate: new Date(data.endDate),
+      startDate,
+      endDate,
     })
     .returning();
 
