@@ -87,3 +87,21 @@ export async function markAllNotificationsRead(userId: string) {
     .set({ isRead: true })
     .where(and(eq(notification.userId, userId), eq(notification.isRead, false)));
 }
+
+export async function getUnreadCount(userId: string) {
+  const [result] = await db
+    .select({ count: count() })
+    .from(notification)
+    .where(
+      and(eq(notification.userId, userId), eq(notification.isRead, false)),
+    );
+  return { unread: result?.count ?? 0 };
+}
+
+export async function deleteAllNotifications(userId: string) {
+  const deleted = await db
+    .delete(notification)
+    .where(eq(notification.userId, userId))
+    .returning({ id: notification.id });
+  return { deleted: deleted.length };
+}

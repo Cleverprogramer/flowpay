@@ -3,6 +3,8 @@ import {
   createNotification,
   listNotifications,
   markAllNotificationsRead,
+  getUnreadCount,
+  deleteAllNotifications,
   markNotificationRead,
 } from "@/services/notification.service";
 import {
@@ -31,6 +33,16 @@ export const notificationRoutes = new Hono()
     const userId = c.get("userId");
     await markAllNotificationsRead(userId);
     return c.json({ success: true });
+  })
+  .get("/unread-count", async (c) => {
+    const userId = c.get("userId");
+    const data = await getUnreadCount(userId);
+    return c.json({ data });
+  })
+  .delete("/all", async (c) => {
+    const userId = c.get("userId");
+    const data = await deleteAllNotifications(userId);
+    return c.json({ data });
   })
   .patch(
     "/:id/read",
