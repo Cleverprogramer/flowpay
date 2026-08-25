@@ -12,4 +12,5 @@ export * from "./client";
 export * from "./expense-split";
 export * from "./balance-audit";
 export * from "./categorization-rule";
+export * from "./notification-preference";
 export {};
