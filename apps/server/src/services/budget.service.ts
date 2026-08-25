@@ -183,3 +183,24 @@ export async function deleteBudget(userId: string, id: string) {
     .returning();
   return result ?? null;
 }
+
+export async function getBudgetsSummary(userId: string) {
+  const rows = await listBudgets(userId);
+  const active = rows;
+
+  return {
+    budgetCount: active.length,
+    totalBudgeted:
+      Math.round(active.reduce((sum, item) => sum + item.amount, 0) * 100) /
+      100,
+    totalSpent:
+      Math.round(active.reduce((sum, item) => sum + item.spent, 0) * 100) /
+      100,
+    overBudgetCount: active.filter(
+      (item) => item.spent >= item.amount && item.amount > 0,
+    ).length,
+    atRiskCount: active.filter(
+      (item) => item.percentage >= 80 && item.percentage < 100,
+    ).length,
+  };
+}

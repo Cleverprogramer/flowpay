@@ -5,6 +5,7 @@ import {
   getBudgetById,
   listBudgets,
   updateBudget,
+  getBudgetsSummary,
 } from "@/services/budget.service";
 import { checkBudgetAlerts } from "@/services/budget-alert.service";
 import {
@@ -19,6 +20,11 @@ export const budgetRoutes = new Hono()
   .get("/", async (c) => {
     const userId = c.get("userId");
     const data = await listBudgets(userId);
+    return c.json({ data });
+  })
+  .get("/summary", async (c) => {
+    const userId = c.get("userId");
+    const data = await getBudgetsSummary(userId);
     return c.json({ data });
   })
   .post("/check-alerts", async (c) => {
